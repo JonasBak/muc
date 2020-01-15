@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/JonasBak/infrastucture/containers/muc/pkg/api"
+	"github.com/JonasBak/infrastucture/containers/muc/pkg/config"
+	"github.com/JonasBak/infrastucture/containers/muc/pkg/music"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -23,10 +26,16 @@ func applyMiddleware(handler http.Handler) http.Handler {
 
 func main() {
 	router := mux.NewRouter()
-
-	rootHandler := applyMiddleware(http.HandlerFunc(RootHandler))
-
+	rootHandler := applyMiddleware(http.HandlerFunc(api.RootHandler))
 	router.Handle("/", rootHandler)
+
+	fmt.Println("Reading config...")
+
+	config.ReadConfig()
+
+	fmt.Println("Creating client...")
+
+	_ = music.NewClient()
 
 	fmt.Println("Starting muc server...")
 

@@ -1,0 +1,6 @@
+minio-host: localhost:9000
+minio-access: replaceme
+minio-secret: replacemetoo
+minio-bucket: music
+minio-ssl: true
+sqlite-location: ./sqlite.db
