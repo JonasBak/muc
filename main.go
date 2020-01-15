@@ -25,10 +25,6 @@ func applyMiddleware(handler http.Handler) http.Handler {
 }
 
 func main() {
-	router := mux.NewRouter()
-	rootHandler := applyMiddleware(http.HandlerFunc(api.RootHandler))
-	router.Handle("/", rootHandler)
-
 	fmt.Println("Reading config...")
 
 	config.ReadConfig()
@@ -37,9 +33,17 @@ func main() {
 
 	c := music.NewClient()
 
-	c.SyncMusicFiles()
+	// c.SyncMusicFiles()
 
 	fmt.Println("Starting muc server...")
+
+	router := mux.NewRouter()
+
+	rootHandler := applyMiddleware(http.HandlerFunc(api.GQLHandler()))
+	router.Handle("/", rootHandler)
+
+	queryHandler := applyMiddleware(http.HandlerFunc(api.QueryHandler(&c)))
+	router.Handle("/query", queryHandler)
 
 	http.ListenAndServe(":3000", (router))
 }

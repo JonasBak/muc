@@ -6,6 +6,7 @@ require (
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.3
+	github.com/graph-gophers/graphql-go v0.0.0-20191115155744-f33e81362277
 	github.com/ilyakaznacheev/cleanenv v1.2.0
 	github.com/jinzhu/gorm v1.9.12
 	github.com/kelseyhightower/envconfig v1.4.0
