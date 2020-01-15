@@ -6,18 +6,21 @@ import (
 	"github.com/minio/minio-go/v6"
 )
 
-func ScanMusicFiles(client *minio.Client) error {
+func (c Client) SyncMusicFiles() error {
 	doneCh := make(chan struct{})
 
 	defer close(doneCh)
 
-	objectCh := client.ListObjectsV2(config.Config.MinioBucket, "", true, doneCh)
+	objectCh := c.mc.ListObjectsV2(config.Config.MinioBucket, "", true, doneCh)
 	for object := range objectCh {
 		if object.Err != nil {
 			fmt.Println(object.Err)
 			return nil
 		}
-		fmt.Printf("%+v\n", object) // TODO log level
+		err := c.IndexMusicFile(object)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 	return nil
 }
