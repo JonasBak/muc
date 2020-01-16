@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func is_music_file(filetype string) bool {
+func isMusicFile(filetype string) bool {
 	for _, t := range []string{"flac"} {
 		if filetype == t {
 			return true
@@ -16,27 +16,37 @@ func is_music_file(filetype string) bool {
 	return false
 }
 
-func (c Client) GetPlaybackUrl(t Track) (string, error) {
-	if t.Url != nil && t.UrlExpires != nil && t.UrlExpires.Sub(time.Now()) > time.Duration(config.Config.MucLinkMargin)*time.Minute {
-		return *t.Url, nil
+func (c Client) getSafeFileUrl(key string, fileUrl *string, expiry *time.Time) (bool, string, *time.Time, error) {
+	if fileUrl != nil && expiry != nil && expiry.Sub(time.Now()) > time.Duration(config.Config.MucLinkMargin)*time.Minute {
+		return false, *fileUrl, nil, nil
 	}
 	ttl := time.Duration(config.Config.MucLinkTtl) * time.Minute
-	expiry := time.Now().Add(ttl)
+	newExpiry := time.Now().Add(ttl)
 
 	reqParams := make(url.Values)
-	new_url, err := c.mc.PresignedGetObject(config.Config.MinioBucket, t.ObjectKey, ttl, reqParams)
+	newUrl, err := c.mc.PresignedGetObject(config.Config.MinioBucket, key, ttl, reqParams)
 	if err != nil {
 		fmt.Println(err)
-		return "", err
+		return false, "", nil, err
 	}
 
-	url := new_url.String()
+	fmt.Printf("Generated new url for %s", key)
 
-	t.Url = &url
-	t.UrlExpires = &expiry
+	return true, newUrl.String(), &newExpiry, nil
+}
+
+func (c Client) GetPlaybackUrl(t Track) (string, error) {
+	updated, playbackUrl, expiry, err := c.getSafeFileUrl(t.ObjectKey, t.Url, t.UrlExpires)
+	if err != nil {
+		return "", err
+	}
+	if !updated {
+		return playbackUrl, nil
+	}
+
+	t.Url = &playbackUrl
+	t.UrlExpires = expiry
 	c.db.Save(&t)
 
-	fmt.Printf("Generated new url for %s", t.ObjectKey)
-
-	return new_url.String(), nil
+	return playbackUrl, nil
 }

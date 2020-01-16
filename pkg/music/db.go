@@ -68,7 +68,7 @@ func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
 		return fmt.Errorf("Could not parse object with key: %s", object.Key)
 	}
 
-	if !is_music_file(subs[4]) {
+	if !isMusicFile(subs[4]) {
 		return nil
 	}
 
