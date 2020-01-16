@@ -8,6 +8,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/minio/minio-go/v6"
 	"regexp"
+	"time"
 )
 
 type Track struct {
@@ -17,6 +18,9 @@ type Track struct {
 	Title     string `gorm:"not null"`
 	ObjectKey string `gorm:"not null;unique"`
 	Filetype  string `gorm:"not null"`
+
+	Url        *string
+	UrlExpires *time.Time
 }
 
 // TODO

@@ -67,6 +67,13 @@ func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) *Playback {
 	if track.Model.ID == 0 {
 		return nil
 	}
-	// TODO handle outdated or non existing playback and cover urls
-	return &Playback{ID: args.TrackId, Url: "TODO", CoverUrl: "TODO"}
+	playback_url, err := r.c.GetPlaybackUrl(track)
+	if err != nil {
+		fmt.Println("Could not get playable url")
+		return nil
+	}
+
+	// TODO handle cover urls
+
+	return &Playback{ID: args.TrackId, Url: playback_url, CoverUrl: "TODO"}
 }
