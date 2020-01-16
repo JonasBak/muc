@@ -51,13 +51,6 @@ func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
 	return nil
 }
 
-func (c Client) List() error {
-	var tracks []Track
-	c.db.Find(&tracks)
-	fmt.Println(tracks)
-	return nil
-}
-
 func GetGormClient() *gorm.DB {
 	db, err := gorm.Open("sqlite3", config.Config.SqliteLocation)
 	if err != nil {
