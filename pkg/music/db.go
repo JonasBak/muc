@@ -11,12 +11,22 @@ import (
 	"time"
 )
 
+type Artist struct {
+	gorm.Model
+	Name         string `gorm:"not null"`
+	ObjectPrefix string `gorm:"not null"`
+
+	Album []Album
+}
+
 type Album struct {
 	gorm.Model
-	Tracks []Track
-	Title  string `gorm:"not null"`
-
+	Title        string `gorm:"not null"`
 	ObjectPrefix string `gorm:"not null"`
+
+	ArtistID uint   `gorm:"not null"`
+	Artist   Artist `gorm:"not null"`
+	Tracks   []Track
 
 	Url        *string
 	UrlExpires *time.Time
@@ -31,8 +41,6 @@ type Track struct {
 	AlbumID uint  `gorm:"not null"`
 	Album   Album `gorm:"not null"`
 
-	Artist string `gorm:"not null"`
-
 	Url        *string
 	UrlExpires *time.Time
 }
@@ -42,7 +50,25 @@ type Track struct {
 // Set flag to true as tracks are imported/found
 // Shows what tracks are moved/deleted, withour deleting the entire db
 
-func (c Client) IndexAlbum(subs []string) (Album, error) {
+func (c Client) IndexArtist(subs []string) (*Artist, error) {
+	var artist Artist
+
+	object_prefix := fmt.Sprintf("%s/", subs[1])
+
+	c.db.Where("object_prefix = ?", object_prefix).First(&artist)
+
+	if artist.Model.ID != 0 {
+		return &artist, nil
+	}
+
+	artist.Name = subs[1]
+	artist.ObjectPrefix = object_prefix
+	c.db.Create(&artist)
+
+	return &artist, nil
+}
+
+func (c Client) IndexAlbum(subs []string) (*Album, error) {
 	var album Album
 
 	object_prefix := fmt.Sprintf("%s/%s/", subs[1], subs[2])
@@ -50,14 +76,20 @@ func (c Client) IndexAlbum(subs []string) (Album, error) {
 	c.db.Where("object_prefix = ?", object_prefix).First(&album)
 
 	if album.Model.ID != 0 {
-		return album, nil
+		return &album, nil
+	}
+
+	artist, err := c.IndexArtist(subs)
+	if err != nil {
+		return nil, err
 	}
 
 	album.Title = subs[2]
+	album.Artist = *artist
 	album.ObjectPrefix = object_prefix
 	c.db.Create(&album)
 
-	return album, nil
+	return &album, nil
 }
 
 func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
@@ -86,7 +118,7 @@ func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
 		return err
 	}
 
-	track := Track{Album: album, Artist: subs[1], Title: subs[3], ObjectKey: object.Key, Filetype: subs[4]}
+	track := Track{Album: *album, Title: subs[3], ObjectKey: object.Key, Filetype: subs[4]}
 	c.db.Create(&track)
 	fmt.Printf("Added %s\n", object.Key)
 
@@ -98,6 +130,6 @@ func GetGormClient() *gorm.DB {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	db.AutoMigrate(&Track{}, &Album{})
+	db.AutoMigrate(&Track{}, &Album{}, &Artist{})
 	return db
 }
