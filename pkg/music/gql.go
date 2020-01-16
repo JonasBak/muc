@@ -13,6 +13,7 @@ const Schema string = `
             tracks: [Track!]!
             track(trackId: ID!): Track
             albums: [Album!]!
+            album(albumId: ID!): Album
             artists: [Artist!]!
             playback(trackId: ID!): Playback
     }
@@ -25,7 +26,9 @@ const Schema string = `
     type Album {
             id: ID!
             title: String!
+            url: String
             artist: Artist!
+            tracks: [Track!]!
     }
     type Artist {
             id: ID!
@@ -81,8 +84,19 @@ func (r *Resolver) Track(args struct{ TrackId graphql.ID }) *Track {
 
 func (r *Resolver) Albums() []Album {
 	var albums []Album
-	r.c.db.Preload("Artist").Find(&albums)
+	r.c.db.Preload("Tracks").Preload("Artist").Find(&albums)
 	return albums
+}
+
+func (r *Resolver) Album(args struct{ AlbumId graphql.ID }) *Album {
+	var album Album
+	r.c.db.Where("id = ?", args.AlbumId).Preload("Tracks").Preload("Artist").First(&album)
+	if album.Model.ID == 0 {
+		return nil
+	}
+	coverUrl, _ := r.c.GetCoverUrl(album)
+	album.Url = &coverUrl
+	return &album
 }
 
 func (r *Resolver) Artists() []Artist {
