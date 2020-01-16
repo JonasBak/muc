@@ -33,7 +33,7 @@ func main() {
 
 	c := music.NewClient()
 
-	// c.SyncMusicFiles()
+	c.SyncMusicFiles()
 
 	fmt.Println("Creating muc server...")
 

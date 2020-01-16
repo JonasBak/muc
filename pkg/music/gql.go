@@ -12,14 +12,19 @@ const Schema string = `
     type Query {
             tracks: [Track!]!
             track(trackId: ID!): Track
+            albums: [Album!]!
             playback(trackId: ID!): Playback
     }
     type Track {
             id: ID!
-            album: String!
+            album: Album!
             artist: String!
             title: String!
             filetype: String!
+    }
+    type Album {
+            id: ID!
+            title: String!
     }
     type Playback {
             id: ID!
@@ -38,6 +43,10 @@ func (t Track) ID() graphql.ID {
 	return graphql.ID(fmt.Sprint(t.Model.ID))
 }
 
+func (a Album) ID() graphql.ID {
+	return graphql.ID(fmt.Sprint(a.Model.ID))
+}
+
 type Resolver struct {
 	c *Client
 }
@@ -48,7 +57,7 @@ func NewResolver(c *Client) Resolver {
 
 func (r *Resolver) Tracks() []Track {
 	var tracks []Track
-	r.c.db.Find(&tracks)
+	r.c.db.Preload("Album").Find(&tracks)
 	return tracks
 }
 
@@ -59,6 +68,12 @@ func (r *Resolver) Track(args struct{ TrackId graphql.ID }) *Track {
 		return nil
 	}
 	return &track
+}
+
+func (r *Resolver) Albums() []Album {
+	var albums []Album
+	r.c.db.Find(&albums)
+	return albums
 }
 
 func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) *Playback {
