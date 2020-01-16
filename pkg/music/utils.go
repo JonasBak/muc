@@ -30,7 +30,7 @@ func (c Client) getSafeFileUrl(key string, fileUrl *string, expiry *time.Time) (
 		return false, "", nil, err
 	}
 
-	fmt.Printf("Generated new url for %s", key)
+	fmt.Printf("Generated new url for %s\n", key)
 
 	return true, newUrl.String(), &newExpiry, nil
 }
@@ -49,4 +49,21 @@ func (c Client) GetPlaybackUrl(t Track) (string, error) {
 	c.db.Save(&t)
 
 	return playbackUrl, nil
+}
+
+func (c Client) GetCoverUrl(a Album) (string, error) {
+	coverKey := fmt.Sprintf("%scover.jpg", a.ObjectPrefix)
+	updated, coverUrl, expiry, err := c.getSafeFileUrl(coverKey, a.Url, a.UrlExpires)
+	if err != nil {
+		return "", err
+	}
+	if !updated {
+		return coverUrl, nil
+	}
+
+	a.Url = &coverUrl
+	a.UrlExpires = expiry
+	c.db.Save(&a)
+
+	return coverUrl, nil
 }

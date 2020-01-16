@@ -78,17 +78,20 @@ func (r *Resolver) Albums() []Album {
 
 func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) *Playback {
 	var track Track
-	r.c.db.Where("id = ?", args.TrackId).First(&track)
+	r.c.db.Where("id = ?", args.TrackId).Preload("Album").First(&track)
 	if track.Model.ID == 0 {
 		return nil
 	}
-	playback_url, err := r.c.GetPlaybackUrl(track)
+	playbackUrl, err := r.c.GetPlaybackUrl(track)
+	if err != nil {
+		fmt.Println("Could not get playable url")
+		return nil
+	}
+	coverUrl, err := r.c.GetCoverUrl(track.Album)
 	if err != nil {
 		fmt.Println("Could not get playable url")
 		return nil
 	}
 
-	// TODO handle cover urls
-
-	return &Playback{ID: args.TrackId, Url: playback_url, CoverUrl: "TODO"}
+	return &Playback{ID: args.TrackId, Url: playbackUrl, CoverUrl: coverUrl}
 }
