@@ -35,7 +35,7 @@ func main() {
 
 	// c.SyncMusicFiles()
 
-	fmt.Println("Starting muc server...")
+	fmt.Println("Creating muc server...")
 
 	router := mux.NewRouter()
 
@@ -45,5 +45,7 @@ func main() {
 	queryHandler := applyMiddleware(http.HandlerFunc(api.QueryHandler(&c)))
 	router.Handle("/query", queryHandler)
 
-	http.ListenAndServe(":3000", (router))
+	fmt.Printf("Starting muc server on port %d...\n", config.Config.MucPort)
+
+	http.ListenAndServe(fmt.Sprintf(":%d", config.Config.MucPort), (router))
 }

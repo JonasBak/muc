@@ -10,6 +10,7 @@ import (
 var Config ConfigStruct
 
 type ConfigStruct struct {
+	MucPort        uint   `yaml:"muc-port" envconfig:"MUC_PORT"`
 	MinioHost      string `yaml:"minio-host" envconfig:"MINIO_HOST"`
 	MinioAccess    string `yaml:"minio-access" envconfig:"MINIO_ACCESS"`
 	MinioSecret    string `yaml:"minio-secret" envconfig:"MINIO_SECRET"`
