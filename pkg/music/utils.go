@@ -3,9 +3,26 @@ package music
 import (
 	"fmt"
 	"github.com/JonasBak/infrastucture/containers/muc/pkg/config"
+	"io/ioutil"
 	"net/url"
+	"os"
 	"time"
 )
+
+func GetSchema() string {
+	f, err := os.Open("schema.graphql")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(2)
+	}
+	defer f.Close()
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(2)
+	}
+	return string(b)
+}
 
 type apiError struct {
 	Code    string `json:"code"`

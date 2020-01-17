@@ -6,44 +6,6 @@ import (
 	graphql "github.com/graph-gophers/graphql-go"
 )
 
-const Schema string = `
-    schema {
-            query: Query
-    }
-    type Query {
-            tracks: [Track!]!
-            track(trackId: ID!): Track
-            albums: [Album!]!
-            album(albumId: ID!): Album
-            artists: [Artist!]!
-            artist(artistId: ID!): Artist
-            playback(trackId: ID!): Playback
-    }
-    type Track {
-            id: ID!
-            album: Album!
-            title: String!
-            filetype: String!
-    }
-    type Album {
-            id: ID!
-            title: String!
-            url: String!
-            artist: Artist!
-            tracks: [Track!]!
-    }
-    type Artist {
-            id: ID!
-            name: String!
-            albums: [Album!]!
-    }
-    type Playback {
-            id: ID!
-            url: String!
-            coverUrl: String!
-    }
-  `
-
 type Playback struct {
 	ID       graphql.ID
 	Url      string

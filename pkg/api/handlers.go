@@ -11,7 +11,7 @@ import (
 func QueryHandler(client *music.Client) http.HandlerFunc {
 	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers(), graphql.MaxParallelism(20)}
 	resolver := music.NewResolver(client)
-	schema := graphql.MustParseSchema(music.Schema, &resolver, opts...)
+	schema := graphql.MustParseSchema(music.GetSchema(), &resolver, opts...)
 	handler := relay.Handler{Schema: schema}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.Background()
