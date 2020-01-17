@@ -13,7 +13,7 @@ type Response<T> = {
 
 async function doQuery<T>(
   queryType: QueryTypeName,
-  args = []
+  args: Array<string> = []
 ): Promise<Response<T>> {
   const req = await fetch(`${API_BASE_URL}/query`, {
     method: "POST",
@@ -28,5 +28,14 @@ async function doQuery<T>(
   return req.json() as Promise<Response<T>>;
 }
 
-export const getAlbums = async () =>
-  (await doQuery<Query["albums"]>("albums")).data["albums"];
+export const getAlbums = async () => {
+  const res = await doQuery<Query["albums"]>("albums");
+  console.log(res.errors);
+  return res.data["albums"];
+};
+
+export const getAlbum = async (albumId: string) => {
+  const res = await doQuery<Query["album"]>("album", [albumId]);
+  console.log(res.errors);
+  return res.data["album"];
+};

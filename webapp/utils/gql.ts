@@ -4,7 +4,7 @@ export type QueryType = {
   variables: string[];
 };
 
-export type QueryTypeName = "artists" | "albums";
+export type QueryTypeName = "artists" | "albums" | "album";
 
 export const QUERIES: { [key: string]: QueryType } = {
   artists: {
@@ -31,5 +31,23 @@ export const QUERIES: { [key: string]: QueryType } = {
       }
     `,
     variables: []
+  },
+  album: {
+    operationName: "Album",
+    query: `
+      query Album($albumId: ID!) {
+        album(albumId: $albumId) {
+          id
+          title
+          url
+          tracks {
+            id
+            title
+            filetype
+          }
+        }
+      }
+    `,
+    variables: ["albumId"]
   }
 };

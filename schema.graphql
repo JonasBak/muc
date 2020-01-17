@@ -3,12 +3,12 @@ schema {
 }
 type Query {
   tracks: [Track!]!
-  track(trackId: ID!): Track
+  track(trackId: ID!): Track!
   albums: [Album!]!
-  album(albumId: ID!): Album
+  album(albumId: ID!): Album!
   artists: [Artist!]!
-  artist(artistId: ID!): Artist
-  playback(trackId: ID!): Playback
+  artist(artistId: ID!): Artist!
+  playback(trackId: ID!): Playback!
 }
 type Track {
   id: ID!

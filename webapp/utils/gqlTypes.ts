@@ -34,12 +34,12 @@ export type Playback = {
 export type Query = {
    __typename?: 'Query',
   tracks: Array<Track>,
-  track?: Maybe<Track>,
+  track: Track,
   albums: Array<Album>,
-  album?: Maybe<Album>,
+  album: Album,
   artists: Array<Artist>,
-  artist?: Maybe<Artist>,
-  playback?: Maybe<Playback>,
+  artist: Artist,
+  playback: Playback,
 };
 
 
