@@ -20,7 +20,7 @@ func QueryHandler(client *music.Client) http.HandlerFunc {
 	})
 }
 
-func GQLHandler() http.HandlerFunc {
+func GiQLHandler() http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write(graphiql)
 	})

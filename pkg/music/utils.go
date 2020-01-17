@@ -7,6 +7,22 @@ import (
 	"time"
 )
 
+type apiError struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+func (e apiError) Error() string {
+	return fmt.Sprintf("error [%s]: %s", e.Code, e.Message)
+}
+
+func (e apiError) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code":    e.Code,
+		"message": e.Message,
+	}
+}
+
 func isMusicFile(filetype string) bool {
 	for _, t := range []string{"flac"} {
 		if filetype == t {

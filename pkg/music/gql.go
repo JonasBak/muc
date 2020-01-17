@@ -16,6 +16,7 @@ const Schema string = `
             albums: [Album!]!
             album(albumId: ID!): Album
             artists: [Artist!]!
+            artist(artistId: ID!): Artist
             playback(trackId: ID!): Playback
     }
     type Track {
@@ -34,6 +35,7 @@ const Schema string = `
     type Artist {
             id: ID!
             name: String!
+            albums: [Album!]!
     }
     type Playback {
             id: ID!
@@ -79,13 +81,13 @@ func (r *Resolver) Tracks() []Track {
 	return tracks
 }
 
-func (r *Resolver) Track(args struct{ TrackId graphql.ID }) *Track {
+func (r *Resolver) Track(args struct{ TrackId graphql.ID }) (*Track, error) {
 	var track Track
 	r.c.db.Where("id = ?", args.TrackId).Preload("Album").Preload("Album.Artist").First(&track)
 	if track.Model.ID == 0 {
-		return nil
+		return nil, apiError{Code: "NotFound", Message: fmt.Sprintf("Could not get track with id %s", args.TrackId)}
 	}
-	return &track
+	return &track, nil
 }
 
 func (r *Resolver) Albums() []Album {
@@ -94,37 +96,43 @@ func (r *Resolver) Albums() []Album {
 	return albums
 }
 
-func (r *Resolver) Album(args struct{ AlbumId graphql.ID }) *Album {
+func (r *Resolver) Album(args struct{ AlbumId graphql.ID }) (*Album, error) {
 	var album Album
 	r.c.db.Where("id = ?", args.AlbumId).Preload("Tracks").Preload("Artist").First(&album)
 	if album.Model.ID == 0 {
-		return nil
+		return nil, apiError{Code: "NotFound", Message: fmt.Sprintf("Could not get album with id %s", args.AlbumId)}
 	}
-	return &album
+	return &album, nil
 }
 
 func (r *Resolver) Artists() []Artist {
 	var artists []Artist
-	r.c.db.Find(&artists)
+	r.c.db.Preload("Albums").Preload("Albums.Tracks").Find(&artists)
 	return artists
 }
 
-func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) *Playback {
-	var track Track
-	r.c.db.Where("id = ?", args.TrackId).Preload("Album").First(&track)
-	if track.Model.ID == 0 {
-		return nil
+func (r *Resolver) Artist(args struct{ ArtistId graphql.ID }) (*Artist, error) {
+	var artist Artist
+	r.c.db.Where("id = ?", args.ArtistId).Preload("Albums").Preload("Albums.Tracks").First(&artist)
+	if artist.Model.ID == 0 {
+		return nil, apiError{Code: "NotFound", Message: fmt.Sprintf("Could not get artist with id %s", args.ArtistId)}
 	}
-	playbackUrl, err := r.c.GetPlaybackUrl(track)
+	return &artist, nil
+}
+
+func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) (*Playback, error) {
+	track, err := r.Track(args)
 	if err != nil {
-		fmt.Println("Could not get playable url")
-		return nil
+		return nil, err
+	}
+	playbackUrl, err := r.c.GetPlaybackUrl(*track)
+	if err != nil {
+		return nil, apiError{Code: "InternalError", Message: err.Error()}
 	}
 	coverUrl, err := r.c.GetCoverUrl(track.Album)
 	if err != nil {
-		fmt.Println("Could not get playable url")
-		return nil
+		return nil, apiError{Code: "InternalError", Message: err.Error()}
 	}
 
-	return &Playback{ID: args.TrackId, Url: playbackUrl, CoverUrl: coverUrl}
+	return &Playback{ID: args.TrackId, Url: playbackUrl, CoverUrl: coverUrl}, err
 }

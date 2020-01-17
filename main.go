@@ -39,7 +39,7 @@ func main() {
 
 	router := mux.NewRouter()
 
-	rootHandler := applyMiddleware(http.HandlerFunc(api.GQLHandler()))
+	rootHandler := applyMiddleware(http.HandlerFunc(api.GiQLHandler()))
 	router.Handle("/", rootHandler)
 
 	queryHandler := applyMiddleware(http.HandlerFunc(api.QueryHandler(&c)))

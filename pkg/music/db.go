@@ -16,7 +16,7 @@ type Artist struct {
 	Name         string `gorm:"not null"`
 	ObjectPrefix string `gorm:"not null"`
 
-	Album []Album
+	Albums []Album
 }
 
 type Album struct {
