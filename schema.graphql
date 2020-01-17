@@ -14,7 +14,6 @@ type Track {
   id: ID!
   album: Album!
   title: String!
-  filetype: String!
 }
 type Album {
   id: ID!
@@ -29,7 +28,8 @@ type Artist {
   albums: [Album!]!
 }
 type Playback {
-  id: ID!
+  track: Track!
   url: String!
   coverUrl: String!
+  filetype: String!
 }

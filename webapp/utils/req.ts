@@ -39,3 +39,9 @@ export const getAlbum = async (albumId: string) => {
   console.log(res.errors);
   return res.data["album"];
 };
+
+export const getPlayback = async (trackId: string) => {
+  const res = await doQuery<Query["playback"]>("playback", [trackId]);
+  console.log(res.errors);
+  return res.data["playback"];
+};

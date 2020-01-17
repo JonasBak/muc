@@ -1,20 +1,20 @@
 import { Album } from "utils/gqlTypes";
 import { NextPageContext } from "next";
 import { getAlbum } from "utils/req";
+import Track from "components/Track";
 
 type Props = {
   album: Album;
 };
 
 const AlbumPage = ({ album }: Props) => {
-  console.log(album.tracks);
   return (
     <div>
       <h1>{album.title}</h1>
       <img src={album.url} />
       <div>
         {album.tracks.map(track => (
-          <div key={track.id}>{track.title}</div>
+          <Track key={track.id} track={track} />
         ))}
       </div>
     </div>

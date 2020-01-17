@@ -26,9 +26,10 @@ export type Artist = {
 
 export type Playback = {
    __typename?: 'Playback',
-  id: Scalars['ID'],
+  track: Track,
   url: Scalars['String'],
   coverUrl: Scalars['String'],
+  filetype: Scalars['String'],
 };
 
 export type Query = {
@@ -67,5 +68,4 @@ export type Track = {
   id: Scalars['ID'],
   album: Album,
   title: Scalars['String'],
-  filetype: Scalars['String'],
 };

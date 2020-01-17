@@ -1,5 +1,6 @@
 import { Album } from "utils/gqlTypes";
 import { getAlbums } from "utils/req";
+import Link from "next/link";
 
 type Props = {
   albums: Array<Album>;
@@ -13,7 +14,9 @@ const AlbumHome = ({ albums }: Props) => {
         {albums.map(album => (
           <div key={album.id}>
             <img src={album.url} />
-            <a href={`/albums/${album.id}`}>{album.title}</a>
+            <Link href="/albums/[id]" as={`/albums/${album.id}`}>
+              <a>{album.title}</a>
+            </Link>
           </div>
         ))}
       </div>

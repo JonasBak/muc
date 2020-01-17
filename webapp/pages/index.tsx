@@ -1,9 +1,11 @@
+import Link from "next/link";
+
 const Home = () => {
   return (
     <div>
-      <a href="/albums">
+      <Link href="/albums">
         <h1>Albums</h1>
-      </a>
+      </Link>
     </div>
   );
 };

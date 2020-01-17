@@ -7,9 +7,10 @@ import (
 )
 
 type Playback struct {
-	ID       graphql.ID
+	Track    Track
 	Url      string
 	CoverUrl string
+	Filetype string
 }
 
 func (t Track) ID() graphql.ID {
@@ -96,5 +97,5 @@ func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) (Playback, error)
 		return Playback{}, apiError{Code: "InternalError", Message: err.Error()}
 	}
 
-	return Playback{ID: args.TrackId, Url: playbackUrl, CoverUrl: coverUrl}, err
+	return Playback{Track: track, Url: playbackUrl, CoverUrl: coverUrl, Filetype: track.Filetype}, err
 }
