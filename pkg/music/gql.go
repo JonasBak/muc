@@ -1,6 +1,7 @@
 package music
 
 import (
+	"context"
 	"fmt"
 	graphql "github.com/graph-gophers/graphql-go"
 )
@@ -26,7 +27,7 @@ const Schema string = `
     type Album {
             id: ID!
             title: String!
-            url: String
+            url: String!
             artist: Artist!
             tracks: [Track!]!
     }
@@ -53,6 +54,11 @@ func (t Track) ID() graphql.ID {
 
 func (a Album) ID() graphql.ID {
 	return graphql.ID(fmt.Sprint(a.Model.ID))
+}
+
+func (a Album) URL(c context.Context) (string, error) {
+	client := c.Value("mucClient").(*Client)
+	return client.GetCoverUrl(a)
 }
 
 func (a Artist) ID() graphql.ID {
@@ -94,8 +100,6 @@ func (r *Resolver) Album(args struct{ AlbumId graphql.ID }) *Album {
 	if album.Model.ID == 0 {
 		return nil
 	}
-	coverUrl, _ := r.c.GetCoverUrl(album)
-	album.Url = &coverUrl
 	return &album
 }
 

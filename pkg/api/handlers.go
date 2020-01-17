@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"github.com/JonasBak/infrastucture/containers/muc/pkg/music"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
@@ -13,7 +14,9 @@ func QueryHandler(client *music.Client) http.HandlerFunc {
 	schema := graphql.MustParseSchema(music.Schema, &resolver, opts...)
 	handler := relay.Handler{Schema: schema}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handler.ServeHTTP(w, r)
+		ctx := context.Background()
+		ctx = context.WithValue(ctx, "mucClient", client)
+		handler.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

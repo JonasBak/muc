@@ -28,8 +28,8 @@ type Album struct {
 	Artist   Artist `gorm:"not null"`
 	Tracks   []Track
 
-	Url        *string
-	UrlExpires *time.Time
+	UrlCache        *string
+	UrlCacheExpires *time.Time
 }
 
 type Track struct {
@@ -41,8 +41,8 @@ type Track struct {
 	AlbumID uint  `gorm:"not null"`
 	Album   Album `gorm:"not null"`
 
-	Url        *string
-	UrlExpires *time.Time
+	UrlCache        *string
+	UrlCacheExpires *time.Time
 }
 
 // TODO
