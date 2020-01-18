@@ -1,8 +1,11 @@
 import { createContext } from "react";
 import { State } from "utils/reducer";
+import { PlayerState } from "utils/reducer";
 
 type Dispatchers = {
   playTrack: (trackId: string) => void;
+  setPlayerState: (newState: PlayerState) => void;
+  togglePlaying: () => void;
 };
 
 type Context = {
@@ -11,13 +14,15 @@ type Context = {
 };
 
 export const initialState: State = {
-  currentTrack: null
+  playerState: null
 };
 
 export const initialContextValue: Context = {
   state: initialState,
   dispatchers: {
-    playTrack: _ => console.log("Not implemented")
+    playTrack: _ => console.log("Not implemented"),
+    setPlayerState: _ => console.log("Not implemented"),
+    togglePlaying: () => console.log("Not implemented")
   }
 };
 

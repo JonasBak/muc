@@ -74,6 +74,14 @@ export const QUERIES: { [key: string]: QueryType } = {
           track {
             id
             title
+            album {
+              id
+              title
+              artist {
+                id
+                name
+              }
+            }
           }
           url
           coverUrl

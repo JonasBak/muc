@@ -1,96 +1,98 @@
-import { useState, useEffect, useContext, useRef } from "react";
+import { Track } from "utils/gqlTypes";
+import { useEffect, useContext, useRef } from "react";
 import { StoreContext } from "utils/context";
-import { getPlayback } from "utils/req";
-import { Playback } from "utils/gqlTypes";
+import { PlayerState } from "utils/reducer";
 
 const formatTime = (time: number): string => {
   return `${Math.floor(time / 60)}:${((time % 60) + "").padStart(2, "0")}`;
 };
 
-type PlayerState = {
+const TrackText = ({
+  track,
+  handleClick,
+  playing,
+  currentTime,
+  duration
+}: {
+  track: Track;
+  handleClick: () => void;
   playing: boolean;
-  duration: number;
   currentTime: number;
-};
-
-const Audio = ({ playback }: { playback: Playback }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [playerState, setPlayerState] = useState<PlayerState>({
-    playing: false,
-    duration: 0,
-    currentTime: 0
-  });
-
-  useEffect(() => {
-    audioRef!.current!.pause();
-    audioRef!.current!.load();
-  }, [playback]);
+  duration: number;
+}) => {
   return (
     <div>
-      <div>
-        {`${playback.track.title} - ${formatTime(
-          playerState.currentTime
-        )}/${formatTime(playerState.duration)}`}
-        <span
-          onClick={() =>
-            playerState.playing
-              ? audioRef!.current!.pause()
-              : audioRef!.current!.play()
-          }
-        >
-          {playerState.playing ? "⏸" : "▶"}
-        </span>
-      </div>
-      <audio
-        ref={audioRef}
-        onPlay={() => {
-          if (!playerState.playing)
-            setPlayerState({ ...playerState, playing: true });
-        }}
-        onPause={() => {
-          if (playerState.playing)
-            setPlayerState({ ...playerState, playing: false });
-        }}
-        onCanPlay={() => {
-          audioRef!.current!.play();
-        }}
-        onTimeUpdate={() => {
-          const currentTime = Math.floor(audioRef!.current!.currentTime);
-          const duration = Math.floor(audioRef!.current!.duration || 0);
-          if (currentTime !== playerState.currentTime) {
-            setPlayerState({ ...playerState, currentTime, duration });
-          }
-        }}
-      >
-        <source src={playback.url} type={`audio/${playback.filetype}`} />
-      </audio>
+      {`${track.title} - ${formatTime(currentTime)}/${formatTime(duration)}`}
+      <span onClick={handleClick}>{playing ? "⏸" : "▶"}</span>
     </div>
   );
 };
 
-const Player = () => {
-  const [playback, setPlayback] = useState<Playback | null>(null);
-  const {
-    state: { currentTrack }
-  } = useContext(StoreContext);
+const Audio = ({
+  playerState,
+  setPlayerState
+}: {
+  playerState: PlayerState;
+  setPlayerState: (newState: PlayerState) => void;
+}) => {
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    const fetchPlayback = async (id: string) => {
-      setPlayback(await getPlayback(id));
-    };
+    audioRef!.current!.pause();
+    audioRef!.current!.load();
+  }, [playerState.playback]);
 
-    if (currentTrack == null) {
-      setPlayback(null);
-    } else {
-      fetchPlayback(currentTrack);
-    }
-  }, [currentTrack]);
+  useEffect(() => {
+    playerState.playing
+      ? audioRef!.current!.play()
+      : audioRef!.current!.pause();
+  }, [playerState.playing]);
+
+  return (
+    <audio
+      ref={audioRef}
+      onCanPlay={() => {
+        setPlayerState({ ...playerState, playing: true });
+      }}
+      onTimeUpdate={() => {
+        const currentTime = Math.floor(audioRef!.current!.currentTime);
+        const duration = Math.floor(audioRef!.current!.duration || 0);
+        if (currentTime !== playerState.currentTime) {
+          setPlayerState({ ...playerState, currentTime, duration });
+        }
+      }}
+    >
+      <source
+        src={playerState.playback.url}
+        type={`audio/${playerState.playback.filetype}`}
+      />
+    </audio>
+  );
+};
+
+const Player = () => {
+  const {
+    state: { playerState },
+    dispatchers: { setPlayerState, togglePlaying }
+  } = useContext(StoreContext);
 
   return (
     <div className="wrapper">
       <div className="title">muc</div>
-      <div className="audio">{playback && <Audio playback={playback} />}</div>
-
+      <div className="audio">
+        {playerState && (
+          <>
+            <TrackText
+              track={playerState.playback.track}
+              handleClick={togglePlaying}
+              playing={playerState.playing}
+              currentTime={playerState.currentTime}
+              duration={playerState.duration}
+            />
+            <Audio playerState={playerState} setPlayerState={setPlayerState} />
+          </>
+        )}
+      </div>
       <style jsx>{`
         .wrapper {
           background-color: #0f0f0f;

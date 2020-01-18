@@ -1,13 +1,22 @@
+import { Playback } from "utils/gqlTypes";
+
+export type PlayerState = {
+  playing: boolean;
+  duration: number;
+  currentTime: number;
+  playback: Playback;
+};
+
 export type State = {
-  currentTrack: string | null;
+  playerState: PlayerState | null;
 };
 
 export const reducer = (state: State, action: any): State => {
   switch (action.type) {
-    case "PLAYTRACK": {
+    case "SET_PLAYER_STATE": {
       return {
         ...state,
-        currentTrack: action.value
+        playerState: action.value
       };
     }
     default: {
