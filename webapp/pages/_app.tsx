@@ -28,6 +28,8 @@ class CustomApp extends App {
           }
           #__next {
             height: 100%;
+            display: flex;
+            flex-direction: column;
           }
           a {
             color: #828a95;
@@ -38,7 +40,8 @@ class CustomApp extends App {
         <style jsx>{`
           .bodyWrapper {
             display: flex;
-            height: 100%;
+            flex: 1;
+            overflow-y: hidden;
           }
           .mainBody {
             flex: 1;

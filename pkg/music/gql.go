@@ -17,8 +17,38 @@ func (t Track) ID() graphql.ID {
 	return graphql.ID(fmt.Sprint(t.Model.ID))
 }
 
+func (t Track) ALBUM(c context.Context) Album {
+	if t.Album.Model.ID != 0 {
+		return t.Album
+	}
+	client := c.Value("mucClient").(*Client)
+	var album Album
+	client.db.Model(&t).Related(&album)
+	return album
+}
+
 func (a Album) ID() graphql.ID {
 	return graphql.ID(fmt.Sprint(a.Model.ID))
+}
+
+func (a Album) ARTIST(c context.Context) Artist {
+	if a.Artist.Model.ID != 0 {
+		return a.Artist
+	}
+	client := c.Value("mucClient").(*Client)
+	var artist Artist
+	client.db.Model(&a).Related(&artist)
+	return artist
+}
+
+func (a Album) TRACKS(c context.Context) []Track {
+	if len(a.Tracks) > 0 {
+		return a.Tracks
+	}
+	client := c.Value("mucClient").(*Client)
+	var tracks []Track
+	client.db.Model(&a).Related(&tracks)
+	return tracks
 }
 
 func (a Album) URL(c context.Context) (string, error) {
@@ -28,6 +58,16 @@ func (a Album) URL(c context.Context) (string, error) {
 
 func (a Artist) ID() graphql.ID {
 	return graphql.ID(fmt.Sprint(a.Model.ID))
+}
+
+func (a Artist) ALBUMS(c context.Context) []Album {
+	if len(a.Albums) != 0 {
+		return a.Albums
+	}
+	client := c.Value("mucClient").(*Client)
+	var albums []Album
+	client.db.Model(&a).Related(&albums)
+	return albums
 }
 
 type Resolver struct {
