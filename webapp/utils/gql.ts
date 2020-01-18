@@ -4,7 +4,12 @@ export type QueryType = {
   variables: string[];
 };
 
-export type QueryTypeName = "artists" | "albums" | "album" | "playback";
+export type QueryTypeName =
+  | "artists"
+  | "albums"
+  | "album"
+  | "tracks"
+  | "playback";
 
 export const QUERIES: { [key: string]: QueryType } = {
   artists: {
@@ -48,6 +53,18 @@ export const QUERIES: { [key: string]: QueryType } = {
       }
     `,
     variables: ["albumId"]
+  },
+  tracks: {
+    operationName: "Tracks",
+    query: `
+      query Tracks {
+        tracks {
+          id
+          title
+        }
+      }
+    `,
+    variables: []
   },
   playback: {
     operationName: "Playback",
