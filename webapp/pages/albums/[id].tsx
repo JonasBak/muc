@@ -25,7 +25,8 @@ const AlbumPage = ({ album }: Props) => {
 AlbumPage.getInitialProps = async (
   context: NextPageContext
 ): Promise<Props> => {
-  const album: Album = await getAlbum(context.query.id[0]);
+  const id = context.query.id;
+  const album: Album = await getAlbum(typeof id === "string" ? id : id[0]);
   return {
     album
   };
