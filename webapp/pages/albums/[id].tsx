@@ -1,5 +1,6 @@
 import { Album } from "utils/gqlTypes";
 import { NextPageContext } from "next";
+import AlbumCover from "components/AlbumCover";
 import { getAlbum } from "utils/req";
 import Track from "components/Track";
 
@@ -11,7 +12,7 @@ const AlbumPage = ({ album }: Props) => {
   return (
     <div>
       <h1>{album.title}</h1>
-      <img src={album.url} />
+      <AlbumCover url={album.url} size={600} />
       <div>
         {album.tracks.map(track => (
           <Track key={track.id} track={track} />

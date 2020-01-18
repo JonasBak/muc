@@ -1,8 +1,7 @@
 import { QUERIES, QueryTypeName } from "./gql";
 import { Query } from "./gqlTypes";
 import fetch from "isomorphic-unfetch";
-
-const API_BASE_URL = "http://localhost:3030";
+import { API_URL } from "utils/config";
 
 type Response<T> = {
   data: { [key: string]: T };
@@ -15,7 +14,7 @@ async function doQuery<T>(
   queryType: QueryTypeName,
   args: Array<string> = []
 ): Promise<Response<T>> {
-  const req = await fetch(`${API_BASE_URL}/query`, {
+  const req = await fetch(`${API_URL}/query`, {
     method: "POST",
     body: JSON.stringify({
       operationName: QUERIES[queryType].operationName,

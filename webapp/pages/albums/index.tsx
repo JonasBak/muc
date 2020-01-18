@@ -1,25 +1,50 @@
 import { Album } from "utils/gqlTypes";
 import { getAlbums } from "utils/req";
+import AlbumCover from "components/AlbumCover";
 import Link from "next/link";
 
 type Props = {
   albums: Array<Album>;
 };
 
+const AlbumItem = ({ album }: { album: Album }) => {
+  return (
+    <div>
+      <div className="container">
+        <Link href="/albums/[id]" as={`/albums/${album.id}`}>
+          <a className="title">{album.title}</a>
+        </Link>
+        <AlbumCover url={album.url} />
+      </div>
+      <style jsx>{`
+        .container {
+          display: flex;
+          flex-direction: column;
+          margin: 10px;
+        }
+        .title {
+          text-align: center;
+        }
+      `}</style>
+    </div>
+  );
+};
+
 const AlbumHome = ({ albums }: Props) => {
   return (
     <div>
       <h1>Albums</h1>
-      <div>
+      <div className="container">
         {albums.map(album => (
-          <div key={album.id}>
-            <img src={album.url} />
-            <Link href="/albums/[id]" as={`/albums/${album.id}`}>
-              <a>{album.title}</a>
-            </Link>
-          </div>
+          <AlbumItem key={album.id} album={album} />
         ))}
       </div>
+      <style jsx>{`
+        .container {
+          display: flex;
+          flex-flow: wrap;
+        }
+      `}</style>
     </div>
   );
 };
