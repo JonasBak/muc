@@ -7,6 +7,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/minio/minio-go/v6"
+	log "github.com/sirupsen/logrus"
 	"regexp"
 	"time"
 )
@@ -109,7 +110,7 @@ func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
 	c.db.Model(&Track{}).Where("object_key = ?", object.Key).Count(&count)
 
 	if count != 0 {
-		// fmt.Printf("Already exists %s\n", object.Key)
+		log.WithFields(log.Fields{"key": object.Key}).Debug("Object already indexed")
 		return nil
 	}
 
@@ -120,7 +121,7 @@ func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
 
 	track := Track{Album: *album, Title: subs[3], ObjectKey: object.Key, Filetype: subs[4]}
 	c.db.Create(&track)
-	fmt.Printf("Added %s\n", object.Key)
+	log.WithFields(log.Fields{"key": object.Key}).Debug("Object indexed")
 
 	return nil
 }
@@ -128,7 +129,7 @@ func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
 func GetGormClient() *gorm.DB {
 	db, err := gorm.Open("sqlite3", config.Config.SqliteLocation)
 	if err != nil {
-		panic("failed to connect database")
+		log.WithFields(log.Fields{"error": err.Error()}).Fatal("Failed to connect to database")
 	}
 	db.AutoMigrate(&Track{}, &Album{}, &Artist{})
 	return db

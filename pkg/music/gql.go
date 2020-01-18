@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	graphql "github.com/graph-gophers/graphql-go"
+	log "github.com/sirupsen/logrus"
 )
 
 type Playback struct {
@@ -21,6 +22,7 @@ func (t Track) ALBUM(c context.Context) Album {
 	if t.Album.Model.ID != 0 {
 		return t.Album
 	}
+	log.Debug("Resolving track.album from db")
 	client := c.Value("mucClient").(*Client)
 	var album Album
 	client.db.Model(&t).Related(&album)
@@ -35,6 +37,7 @@ func (a Album) ARTIST(c context.Context) Artist {
 	if a.Artist.Model.ID != 0 {
 		return a.Artist
 	}
+	log.Debug("Resolving album.artist from db")
 	client := c.Value("mucClient").(*Client)
 	var artist Artist
 	client.db.Model(&a).Related(&artist)
@@ -45,6 +48,7 @@ func (a Album) TRACKS(c context.Context) []Track {
 	if len(a.Tracks) > 0 {
 		return a.Tracks
 	}
+	log.Debug("Resolving album.tracks from db")
 	client := c.Value("mucClient").(*Client)
 	var tracks []Track
 	client.db.Model(&a).Related(&tracks)
@@ -64,6 +68,7 @@ func (a Artist) ALBUMS(c context.Context) []Album {
 	if len(a.Albums) != 0 {
 		return a.Albums
 	}
+	log.Debug("Resolving artist.albums from db")
 	client := c.Value("mucClient").(*Client)
 	var albums []Album
 	client.db.Model(&a).Related(&albums)

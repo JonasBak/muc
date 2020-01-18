@@ -3,6 +3,7 @@ package music
 import (
 	"fmt"
 	"github.com/JonasBak/infrastucture/containers/muc/pkg/config"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -12,14 +13,12 @@ import (
 func GetSchema() string {
 	f, err := os.Open("schema.graphql")
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(2)
+		log.Fatal(err)
 	}
 	defer f.Close()
 	b, err := ioutil.ReadAll(f)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(2)
+		log.Fatal(err)
 	}
 	return string(b)
 }
@@ -59,11 +58,11 @@ func (c Client) getSafeFileUrl(key string, fileUrl *string, expiry *time.Time) (
 	reqParams := make(url.Values)
 	newUrl, err := c.mc.PresignedGetObject(config.Config.MinioBucket, key, ttl, reqParams)
 	if err != nil {
-		fmt.Println(err)
+		log.WithFields(log.Fields{"error": err.Error()}).Warn("Could not get prisigned object url!")
 		return false, nil, nil, err
 	}
 
-	fmt.Printf("Generated new url for %s\n", key)
+	log.WithFields(log.Fields{"key": key}).Debug("Generated new presigned url")
 
 	newUrlString := newUrl.String()
 	return true, &newUrlString, &newExpiry, nil

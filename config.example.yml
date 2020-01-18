@@ -1,3 +1,4 @@
+log-level: debug
 muc-port: 3030
 muc-link-ttl: 1440
 muc-link-margin: 10

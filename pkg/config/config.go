@@ -10,14 +10,18 @@ import (
 var Config ConfigStruct
 
 type ConfigStruct struct {
-	MucPort        uint   `yaml:"muc-port" envconfig:"MUC_PORT"`
-	MucLinkTtl     uint   `yaml:"muc-link-ttl" envconfig:"MUC_LINK_TTL"`
-	MucLinkMargin  uint   `yaml:"muc-link-margin" envconfig:"MUC_LINK_MARGIN"`
-	MinioHost      string `yaml:"minio-host" envconfig:"MINIO_HOST"`
-	MinioAccess    string `yaml:"minio-access" envconfig:"MINIO_ACCESS"`
-	MinioSecret    string `yaml:"minio-secret" envconfig:"MINIO_SECRET"`
-	MinioBucket    string `yaml:"minio-bucket" envconfig:"MINIO_BUCKET"`
-	MinioSSL       bool   `yaml:"minio-ssl" envconfig:"MINIO_SSL"`
+	LogLevel string `yaml:"log-level" envconfig:"LOG_LEVEL"`
+
+	MucPort       uint `yaml:"muc-port" envconfig:"MUC_PORT"`
+	MucLinkTtl    uint `yaml:"muc-link-ttl" envconfig:"MUC_LINK_TTL"`
+	MucLinkMargin uint `yaml:"muc-link-margin" envconfig:"MUC_LINK_MARGIN"`
+
+	MinioHost   string `yaml:"minio-host" envconfig:"MINIO_HOST"`
+	MinioAccess string `yaml:"minio-access" envconfig:"MINIO_ACCESS"`
+	MinioSecret string `yaml:"minio-secret" envconfig:"MINIO_SECRET"`
+	MinioBucket string `yaml:"minio-bucket" envconfig:"MINIO_BUCKET"`
+	MinioSSL    bool   `yaml:"minio-ssl" envconfig:"MINIO_SSL"`
+
 	SqliteLocation string `yaml:"sqlite-location" envconfig:"SQLITE_LOCATION"`
 }
 

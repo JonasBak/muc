@@ -7,6 +7,7 @@ import (
 	"github.com/JonasBak/infrastucture/containers/muc/pkg/music"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 )
@@ -28,14 +29,15 @@ func main() {
 	fmt.Println("Reading config...")
 
 	config.ReadConfig()
+	initLogs()
 
-	fmt.Println("Creating client...")
+	log.Info("Creating client")
 
 	c := music.NewClient()
 
 	c.SyncMusicFiles()
 
-	fmt.Println("Creating muc server...")
+	log.Info("Creating muc server")
 
 	router := mux.NewRouter()
 
@@ -45,7 +47,7 @@ func main() {
 	queryHandler := applyMiddleware(http.HandlerFunc(api.QueryHandler(&c)))
 	router.Handle("/query", queryHandler)
 
-	fmt.Printf("Starting muc server on port %d...\n", config.Config.MucPort)
+	log.WithFields(log.Fields{"port": config.Config.MucPort}).Info("Starting muc api")
 
 	http.ListenAndServe(fmt.Sprintf(":%d", config.Config.MucPort), (router))
 }
