@@ -2,28 +2,56 @@ import { Track } from "utils/gqlTypes";
 import { useEffect, useContext, useRef } from "react";
 import { StoreContext } from "utils/context";
 import { PlayerState } from "utils/reducer";
+import PlayPauseButton from "components/PlayPauseButton";
 
 const formatTime = (time: number): string => {
   return `${Math.floor(time / 60)}:${((time % 60) + "").padStart(2, "0")}`;
 };
 
 const TrackText = ({
-  track,
-  handleClick,
-  playing,
-  currentTime,
-  duration
+  playerState,
+  handleClick
 }: {
-  track: Track;
+  playerState: PlayerState;
   handleClick: () => void;
-  playing: boolean;
-  currentTime: number;
-  duration: number;
 }) => {
+  const {
+    playback: { track },
+    playing,
+    currentTime,
+    duration
+  } = playerState;
   return (
-    <div>
-      {`${track.title} - ${formatTime(currentTime)}/${formatTime(duration)}`}
-      <span onClick={handleClick}>{playing ? "⏸" : "▶"}</span>
+    <div className="wrapper">
+      <div className="trackWrapper">
+        <div className="title">{track.title}</div>
+        <div className="artist">{track.album.artist.name}</div>
+      </div>
+      <div className="time">{`${formatTime(currentTime)}/${formatTime(
+        duration
+      )}`}</div>
+      <PlayPauseButton playing={playing} handleClick={handleClick} />
+      <style jsx>{`
+        .wrapper {
+          display: flex;
+          align-items: center;
+        }
+        .time {
+          padding: 0px 10px;
+        }
+        .trackWrapper {
+          display: flex;
+          flex-direction: column;
+          text-align: center;
+          padding: 2px;
+        }
+        .title {
+          font-weight: bold;
+        }
+        .artist {
+          color: #b0b0b0;
+        }
+      `}</style>
     </div>
   );
 };
@@ -82,13 +110,7 @@ const Player = () => {
       <div className="audio">
         {playerState && (
           <>
-            <TrackText
-              track={playerState.playback.track}
-              handleClick={togglePlaying}
-              playing={playerState.playing}
-              currentTime={playerState.currentTime}
-              duration={playerState.duration}
-            />
+            <TrackText playerState={playerState} handleClick={togglePlaying} />
             <Audio playerState={playerState} setPlayerState={setPlayerState} />
           </>
         )}
