@@ -9,6 +9,7 @@ import (
 	"github.com/minio/minio-go/v6"
 	log "github.com/sirupsen/logrus"
 	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -35,9 +36,10 @@ type Album struct {
 
 type Track struct {
 	gorm.Model
-	Title     string `gorm:"not null"`
-	ObjectKey string `gorm:"not null;unique"`
-	Filetype  string `gorm:"not null"`
+	Title      string `gorm:"not null"`
+	ObjectKey  string `gorm:"not null;unique"`
+	TrackIndex int    `gorm:"not null"`
+	Filetype   string `gorm:"not null"`
 
 	AlbumID uint  `gorm:"not null"`
 	Album   Album `gorm:"not null"`
@@ -56,9 +58,7 @@ func (c Client) IndexArtist(subs []string) (*Artist, error) {
 
 	object_prefix := fmt.Sprintf("%s/", subs[1])
 
-	c.db.Where("object_prefix = ?", object_prefix).First(&artist)
-
-	if artist.Model.ID != 0 {
+	if !c.db.Where("object_prefix = ?", object_prefix).First(&artist).RecordNotFound() {
 		return &artist, nil
 	}
 
@@ -74,9 +74,7 @@ func (c Client) IndexAlbum(subs []string) (*Album, error) {
 
 	object_prefix := fmt.Sprintf("%s/%s/", subs[1], subs[2])
 
-	c.db.Where("object_prefix = ?", object_prefix).First(&album)
-
-	if album.Model.ID != 0 {
+	if !c.db.Where("object_prefix = ?", object_prefix).First(&album).RecordNotFound() {
 		return &album, nil
 	}
 
@@ -95,13 +93,13 @@ func (c Client) IndexAlbum(subs []string) (*Album, error) {
 
 func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
 	// TODO only compile once
-	r := regexp.MustCompile(`(.+)/(.+)/(.+)\.(\w+)`)
+	r := regexp.MustCompile(`(.+)/(.+)/(\d+)\s+(.+)\.(\w+)`)
 	subs := r.FindStringSubmatch(object.Key)
-	if len(subs) != 5 {
+	if len(subs) != 6 {
 		return fmt.Errorf("Could not parse object with key: %s", object.Key)
 	}
 
-	if !isMusicFile(subs[4]) {
+	if !isMusicFile(subs[5]) {
 		return nil
 	}
 
@@ -119,7 +117,13 @@ func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
 		return err
 	}
 
-	track := Track{Album: *album, Title: subs[3], ObjectKey: object.Key, Filetype: subs[4]}
+	trackIndex, err := strconv.Atoi(subs[3])
+	if err != nil {
+		log.WithFields(log.Fields{"key": object.Key}).Warn("Could not get TrackIndex")
+		trackIndex = -1
+	}
+
+	track := Track{Album: *album, Title: subs[4], ObjectKey: object.Key, Filetype: subs[5], TrackIndex: trackIndex}
 	c.db.Create(&track)
 	log.WithFields(log.Fields{"key": object.Key}).Debug("Object indexed")
 

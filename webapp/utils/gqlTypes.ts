@@ -68,4 +68,5 @@ export type Track = {
   id: Scalars['ID'],
   album: Album,
   title: Scalars['String'],
+  trackIndex: Scalars['Int'],
 };
