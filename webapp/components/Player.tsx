@@ -1,5 +1,5 @@
 import { Track } from "utils/gqlTypes";
-import { useEffect, useContext, useRef } from "react";
+import { useContext } from "react";
 import { StoreContext, PlayerState, Dispatchers } from "utils/context";
 import PlayPauseButton from "components/PlayPauseButton";
 
@@ -55,55 +55,10 @@ const TrackText = ({
   );
 };
 
-const Audio = ({
-  playerState,
-  setPlayerState,
-  nextTrack
-}: {
-  playerState: PlayerState;
-  setPlayerState: Dispatchers["setPlayerState"];
-  nextTrack: Dispatchers["nextTrack"];
-}) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  useEffect(() => {
-    audioRef!.current!.pause();
-    audioRef!.current!.load();
-  }, [playerState.playback]);
-
-  useEffect(() => {
-    playerState.playing
-      ? audioRef!.current!.play()
-      : audioRef!.current!.pause();
-  }, [playerState.playing]);
-
-  return (
-    <audio
-      ref={audioRef}
-      onCanPlay={() => {
-        setPlayerState({ ...playerState, playing: true });
-      }}
-      onTimeUpdate={() => {
-        const currentTime = Math.floor(audioRef!.current!.currentTime);
-        const duration = Math.floor(audioRef!.current!.duration || 0);
-        if (currentTime !== playerState.currentTime) {
-          setPlayerState({ ...playerState, currentTime, duration });
-        }
-      }}
-      onEnded={nextTrack}
-    >
-      <source
-        src={playerState.playback.url}
-        type={`audio/${playerState.playback.filetype}`}
-      />
-    </audio>
-  );
-};
-
 const Player = () => {
   const {
     state: { playerState },
-    dispatchers: { setPlayerState, togglePlaying, nextTrack }
+    dispatchers: { togglePlaying, nextTrack }
   } = useContext(StoreContext);
 
   return (
@@ -111,14 +66,7 @@ const Player = () => {
       <div className="title">muc</div>
       <div className="audio">
         {playerState && (
-          <>
-            <TrackText playerState={playerState} handleClick={togglePlaying} />
-            <Audio
-              playerState={playerState}
-              setPlayerState={setPlayerState}
-              nextTrack={nextTrack}
-            />
-          </>
+          <TrackText playerState={playerState} handleClick={togglePlaying} />
         )}
       </div>
       <style jsx>{`

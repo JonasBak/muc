@@ -2,6 +2,7 @@ import App from "next/app";
 import Container from "components/Container";
 import Player from "components/Player";
 import Sidepanel from "components/Sidepanel";
+import Audio from "components/Audio";
 
 class CustomApp extends App {
   public render() {
@@ -9,6 +10,7 @@ class CustomApp extends App {
     return (
       <Container>
         <Player />
+        <Audio />
         <div className="bodyWrapper">
           <Sidepanel />
           <div className="mainBody">
