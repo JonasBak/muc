@@ -13,11 +13,12 @@ export type State = {
   queue: Array<Track>;
 };
 
-type Dispatchers = {
+export type Dispatchers = {
   playTrack: (trackId: string) => void;
   setPlayerState: (newState: PlayerState) => void;
   togglePlaying: () => void;
   enqueue: (track: Track) => void;
+  nextTrack: () => void;
 };
 
 type Context = {
@@ -36,7 +37,8 @@ export const initialContextValue: Context = {
     playTrack: _ => console.log("Not implemented"),
     setPlayerState: _ => console.log("Not implemented"),
     togglePlaying: () => console.log("Not implemented"),
-    enqueue: _ => console.log("Not implemented")
+    enqueue: _ => console.log("Not implemented"),
+    nextTrack: () => console.log("Not implemented")
   }
 };
 

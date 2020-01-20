@@ -1,5 +1,5 @@
 import { Playback, Track } from "utils/gqlTypes";
-import { State, PlayerState } from "utils/context";
+import { State, PlayerState, initialState } from "utils/context";
 
 export type Action =
   | {
@@ -9,6 +9,10 @@ export type Action =
   | {
       type: "ENQUEUE";
       value: Track;
+    }
+  | {
+      type: "NEXT_TRACK";
+      value: Playback;
     };
 
 export const reducer = (state: State, action: Action): State => {
@@ -23,6 +27,18 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         queue: [...state.queue, action.value]
+      };
+    }
+    case "NEXT_TRACK": {
+      return {
+        ...state,
+        playerState: {
+          playing: false,
+          duration: 0,
+          currentTime: 0,
+          playback: action.value
+        },
+        queue: state.queue.slice(1)
       };
     }
     default: {

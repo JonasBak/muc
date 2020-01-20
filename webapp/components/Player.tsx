@@ -1,6 +1,6 @@
 import { Track } from "utils/gqlTypes";
 import { useEffect, useContext, useRef } from "react";
-import { StoreContext, PlayerState } from "utils/context";
+import { StoreContext, PlayerState, Dispatchers } from "utils/context";
 import PlayPauseButton from "components/PlayPauseButton";
 
 const formatTime = (time: number): string => {
@@ -57,10 +57,12 @@ const TrackText = ({
 
 const Audio = ({
   playerState,
-  setPlayerState
+  setPlayerState,
+  nextTrack
 }: {
   playerState: PlayerState;
-  setPlayerState: (newState: PlayerState) => void;
+  setPlayerState: Dispatchers["setPlayerState"];
+  nextTrack: Dispatchers["nextTrack"];
 }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -88,6 +90,7 @@ const Audio = ({
           setPlayerState({ ...playerState, currentTime, duration });
         }
       }}
+      onEnded={nextTrack}
     >
       <source
         src={playerState.playback.url}
@@ -100,7 +103,7 @@ const Audio = ({
 const Player = () => {
   const {
     state: { playerState },
-    dispatchers: { setPlayerState, togglePlaying }
+    dispatchers: { setPlayerState, togglePlaying, nextTrack }
   } = useContext(StoreContext);
 
   return (
@@ -110,7 +113,11 @@ const Player = () => {
         {playerState && (
           <>
             <TrackText playerState={playerState} handleClick={togglePlaying} />
-            <Audio playerState={playerState} setPlayerState={setPlayerState} />
+            <Audio
+              playerState={playerState}
+              setPlayerState={setPlayerState}
+              nextTrack={nextTrack}
+            />
           </>
         )}
       </div>

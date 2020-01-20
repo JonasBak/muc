@@ -8,12 +8,13 @@ type Props = {
 
 const Track = ({ track }: Props) => {
   const {
-    dispatchers: { playTrack }
+    dispatchers: { playTrack, enqueue }
   } = useContext(StoreContext);
   return (
     <div className="wrapper">
       <span onClick={() => playTrack(track.id)}>▶ </span>
       {track.title}
+      <span onClick={() => enqueue(track)}> Q</span>
       <style jsx>{`
         .wrapper {
           padding: 5px;

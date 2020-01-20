@@ -46,6 +46,16 @@ const Container = ({ children }: { children: any }) => {
               type: "ENQUEUE",
               value: track
             });
+          },
+          nextTrack: async () => {
+            if (state.queue.length === 0) {
+              return;
+            }
+            const playback = await getPlayback(state.queue[0].id);
+            dispatch({
+              type: "NEXT_TRACK",
+              value: playback
+            });
           }
         }
       }}
