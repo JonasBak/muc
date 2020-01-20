@@ -33,16 +33,20 @@ const AlbumItem = ({ album }: { album: Album }) => {
 const AlbumHome = ({ albums }: Props) => {
   return (
     <div>
-      <h1>Albums</h1>
+      <h1 className="title">Albums</h1>
       <div className="container">
         {albums.map(album => (
           <AlbumItem key={album.id} album={album} />
         ))}
       </div>
       <style jsx>{`
+        .title {
+          text-align: center;
+        }
         .container {
           display: flex;
           flex-flow: wrap;
+          justify-content: center;
         }
       `}</style>
     </div>
