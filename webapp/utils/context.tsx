@@ -1,11 +1,23 @@
 import { createContext } from "react";
-import { State } from "utils/reducer";
-import { PlayerState } from "utils/reducer";
+import { Playback, Track } from "utils/gqlTypes";
+
+export type PlayerState = {
+  playing: boolean;
+  duration: number;
+  currentTime: number;
+  playback: Playback;
+};
+
+export type State = {
+  playerState: PlayerState | null;
+  queue: Array<Track>;
+};
 
 type Dispatchers = {
   playTrack: (trackId: string) => void;
   setPlayerState: (newState: PlayerState) => void;
   togglePlaying: () => void;
+  enqueue: (track: Track) => void;
 };
 
 type Context = {
@@ -14,7 +26,8 @@ type Context = {
 };
 
 export const initialState: State = {
-  playerState: null
+  playerState: null,
+  queue: []
 };
 
 export const initialContextValue: Context = {
@@ -22,7 +35,8 @@ export const initialContextValue: Context = {
   dispatchers: {
     playTrack: _ => console.log("Not implemented"),
     setPlayerState: _ => console.log("Not implemented"),
-    togglePlaying: () => console.log("Not implemented")
+    togglePlaying: () => console.log("Not implemented"),
+    enqueue: _ => console.log("Not implemented")
   }
 };
 

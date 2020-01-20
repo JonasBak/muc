@@ -1,17 +1,20 @@
-export type QueryType = {
+interface QueryType {
   operationName: string;
   query: string;
   variables: string[];
-};
+}
 
-export type QueryTypeName =
-  | "artists"
-  | "albums"
-  | "album"
-  | "tracks"
-  | "playback";
+interface QueriesType {
+  artists: QueryType;
+  albums: QueryType;
+  album: QueryType;
+  tracks: QueryType;
+  playback: QueryType;
+}
 
-export const QUERIES: { [key: string]: QueryType } = {
+export type QueryTypeName = keyof QueriesType;
+
+export const Queries: QueriesType = {
   artists: {
     operationName: "Artists",
     query: `

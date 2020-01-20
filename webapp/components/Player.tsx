@@ -1,7 +1,6 @@
 import { Track } from "utils/gqlTypes";
 import { useEffect, useContext, useRef } from "react";
-import { StoreContext } from "utils/context";
-import { PlayerState } from "utils/reducer";
+import { StoreContext, PlayerState } from "utils/context";
 import PlayPauseButton from "components/PlayPauseButton";
 
 const formatTime = (time: number): string => {

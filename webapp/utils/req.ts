@@ -1,13 +1,13 @@
-import { QUERIES, QueryTypeName } from "./gql";
+import { Queries, QueryTypeName } from "./gql";
 import { Query } from "./gqlTypes";
 import fetch from "isomorphic-unfetch";
 import { API_URL } from "utils/config";
 
 type Response<T> = {
   data: { [key: string]: T };
-  errors: {
+  errors?: {
     message: string;
-  } | null;
+  };
 };
 
 async function doQuery<T>(
@@ -17,9 +17,9 @@ async function doQuery<T>(
   const req = await fetch(`${API_URL}/query`, {
     method: "POST",
     body: JSON.stringify({
-      operationName: QUERIES[queryType].operationName,
-      query: QUERIES[queryType].query,
-      variables: QUERIES[queryType].variables
+      operationName: Queries[queryType].operationName,
+      query: Queries[queryType].query,
+      variables: Queries[queryType].variables
         .map((name, i) => ({ [name]: args[i] }))
         .reduce((obj, a) => ({ ...obj, ...a }), {})
     })

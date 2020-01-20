@@ -1,8 +1,8 @@
 import { reducer } from "utils/reducer";
 import { getPlayback } from "utils/req";
 import { useReducer } from "react";
-import { StoreContext, initialState } from "utils/context";
-import { PlayerState } from "utils/reducer";
+import { StoreContext, initialState, PlayerState, State } from "utils/context";
+import { Track } from "utils/gqlTypes";
 
 const Container = ({ children }: { children: any }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -31,12 +31,20 @@ const Container = ({ children }: { children: any }) => {
             });
           },
           togglePlaying: async () => {
+            if (state.playerState !== null) {
+              dispatch({
+                type: "SET_PLAYER_STATE",
+                value: {
+                  ...state.playerState,
+                  playing: !state.playerState!.playing
+                }
+              });
+            }
+          },
+          enqueue: async (track: Track) => {
             dispatch({
-              type: "SET_PLAYER_STATE",
-              value: {
-                ...state.playerState,
-                playing: !state.playerState!.playing
-              }
+              type: "ENQUEUE",
+              value: track
             });
           }
         }

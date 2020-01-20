@@ -1,22 +1,28 @@
-import { Playback } from "utils/gqlTypes";
+import { Playback, Track } from "utils/gqlTypes";
+import { State, PlayerState } from "utils/context";
 
-export type PlayerState = {
-  playing: boolean;
-  duration: number;
-  currentTime: number;
-  playback: Playback;
-};
+export type Action =
+  | {
+      type: "SET_PLAYER_STATE";
+      value: PlayerState;
+    }
+  | {
+      type: "ENQUEUE";
+      value: Track;
+    };
 
-export type State = {
-  playerState: PlayerState | null;
-};
-
-export const reducer = (state: State, action: any): State => {
+export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SET_PLAYER_STATE": {
       return {
         ...state,
         playerState: action.value
+      };
+    }
+    case "ENQUEUE": {
+      return {
+        ...state,
+        queue: [...state.queue, action.value]
       };
     }
     default: {
