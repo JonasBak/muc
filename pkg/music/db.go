@@ -6,7 +6,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/minio/minio-go/v6"
 	log "github.com/sirupsen/logrus"
 	"regexp"
 	"strconv"
@@ -91,24 +90,24 @@ func (c Client) IndexAlbum(subs []string) (*Album, error) {
 	return &album, nil
 }
 
-func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
+func (c Client) IndexMusicFile(objectKey string) error {
 	// TODO only compile once
 	r := regexp.MustCompile(`(.+)/(.+)/(\d+)\s+(.+)\.(\w+)`)
-	subs := r.FindStringSubmatch(object.Key)
+	subs := r.FindStringSubmatch(objectKey)
 	if len(subs) != 6 {
-		return fmt.Errorf("Could not parse object with key: %s", object.Key)
+		return fmt.Errorf("Could not parse object with key: %s", objectKey)
 	}
 
 	if !isMusicFile(subs[5]) {
-		return nil
+		return fmt.Errorf("Object with key %s doesn't have allowed filetype %s", objectKey, subs[5])
 	}
 
 	var count int
 
-	c.db.Model(&Track{}).Where("object_key = ?", object.Key).Count(&count)
+	c.db.Model(&Track{}).Where("object_key = ?", objectKey).Count(&count)
 
 	if count != 0 {
-		log.WithFields(log.Fields{"key": object.Key}).Debug("Object already indexed")
+		log.WithFields(log.Fields{"key": objectKey}).Debug("Object already indexed")
 		return nil
 	}
 
@@ -119,13 +118,13 @@ func (c Client) IndexMusicFile(object minio.ObjectInfo) error {
 
 	trackIndex, err := strconv.Atoi(subs[3])
 	if err != nil {
-		log.WithFields(log.Fields{"key": object.Key}).Warn("Could not get TrackIndex")
+		log.WithFields(log.Fields{"key": objectKey}).Warn("Could not get TrackIndex")
 		trackIndex = -1
 	}
 
-	track := Track{Album: *album, Title: subs[4], ObjectKey: object.Key, Filetype: subs[5], TrackIndex: trackIndex}
+	track := Track{Album: *album, Title: subs[4], ObjectKey: objectKey, Filetype: subs[5], TrackIndex: trackIndex}
 	c.db.Create(&track)
-	log.WithFields(log.Fields{"key": object.Key}).Debug("Object indexed")
+	log.WithFields(log.Fields{"key": objectKey}).Debug("Object indexed")
 
 	return nil
 }

@@ -17,7 +17,7 @@ func (c Client) SyncMusicFiles() error {
 			log.WithFields(log.Fields{"error": object.Err.Error()}).Fatal("Failed to connect to minio")
 			return object.Err
 		}
-		err := c.IndexMusicFile(object)
+		err := c.IndexMusicFile(object.Key)
 		if err != nil {
 			log.WithFields(log.Fields{"key": object.Key}).Warn("Could not parse object")
 		}
