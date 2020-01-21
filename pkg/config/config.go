@@ -31,7 +31,11 @@ func processError(err error) {
 }
 
 func readFile(cfg *ConfigStruct) {
-	f, err := os.Open("config.yml")
+	configFile, ok := os.LookupEnv("CONFIG_FILE")
+	if !ok {
+		configFile = "config.yml"
+	}
+	f, err := os.Open(configFile)
 	if err != nil {
 		processError(err)
 	}
