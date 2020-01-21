@@ -39,7 +39,7 @@ Run the frontend with `yarn dev`. It will be available at [localhost:3000](http:
 
 ## Development
 
-If you don't have a minio instance running, you can run `docker-compose -f ./test/docker-compose.yml up -d` to start and set up a local minio instance with the user `muc-user/abc0987654321` and some dummy data. Note that none of the "music" files actually can be played, as they are filled with dummy data, making it hard to test the frontend with this.
+If you don't have a minio instance running, you can run `docker-compose -f ./test/docker-compose.yml up -d` to start and set up a local minio instance with the user `muc-user/abc0987654321` and some dummy data. Start the backend with `CONFIG_FILE="test/config.test.yml" go run .`. Note that none of the "music" files actually can be played, as they are filled with dummy data, making it hard to test the frontend with this.
 
 If the graphql schema in `schema.graphiql` is changed, run `yarn gen:graphql` to regenerate the typescript types used in the frontend.
 

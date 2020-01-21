@@ -1,0 +1,10 @@
+log-level: debug
+muc-port: 3031
+muc-link-ttl: 1440
+muc-link-margin: 10
+minio-host: 127.0.0.1:9000
+minio-access: muc-user
+minio-secret: abc0987654321
+minio-bucket: music
+minio-ssl: false
+sqlite-location: ":memory:"
