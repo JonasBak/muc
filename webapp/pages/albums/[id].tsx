@@ -3,16 +3,23 @@ import { NextPageContext } from "next";
 import AlbumCover from "components/AlbumCover";
 import { getAlbum } from "utils/req";
 import Track from "components/Track";
+import { useContext } from "react";
+import { StoreContext } from "utils/context";
 
 type Props = {
   album: Album;
 };
 
 const AlbumPage = ({ album }: Props) => {
+  const {
+    dispatchers: { playAlbum }
+  } = useContext(StoreContext);
+
   return (
     <div>
       <h1>{album.title}</h1>
       <AlbumCover url={album.url} size={600} />
+      <div onClick={() => playAlbum(album, 0)}>Play</div>
       <div>
         {album.tracks.map(track => (
           <Track key={track.id} track={track} />

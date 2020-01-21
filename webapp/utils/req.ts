@@ -4,7 +4,7 @@ import fetch from "isomorphic-unfetch";
 import { API_URL } from "utils/config";
 
 type Response<T> = {
-  data: { [key: string]: T };
+  data: { [key in QueryTypeName]: T };
   errors?: {
     message: string;
   };

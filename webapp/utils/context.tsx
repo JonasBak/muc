@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { Playback, Track } from "utils/gqlTypes";
+import { Playback, Track, Album } from "utils/gqlTypes";
 
 export type PlayerState = {
   playing: boolean;
@@ -8,9 +8,16 @@ export type PlayerState = {
   playback: Playback;
 };
 
+export type ListType = {
+  type: "ALBUM";
+  album: Album;
+  currentIndex: number;
+};
+
 export type State = {
   playerState: PlayerState | null;
   queue: Array<Track>;
+  currentList: ListType | null;
 };
 
 export type Dispatchers = {
@@ -19,6 +26,7 @@ export type Dispatchers = {
   togglePlaying: () => void;
   enqueue: (track: Track) => void;
   nextTrack: () => void;
+  playAlbum: (album: Album, currentIndex: number) => void;
 };
 
 type Context = {
@@ -28,17 +36,19 @@ type Context = {
 
 export const initialState: State = {
   playerState: null,
-  queue: []
+  queue: [],
+  currentList: null
 };
 
 export const initialContextValue: Context = {
   state: initialState,
   dispatchers: {
-    playTrack: _ => console.log("Not implemented"),
-    setPlayerState: _ => console.log("Not implemented"),
+    playTrack: () => console.log("Not implemented"),
+    setPlayerState: () => console.log("Not implemented"),
     togglePlaying: () => console.log("Not implemented"),
-    enqueue: _ => console.log("Not implemented"),
-    nextTrack: () => console.log("Not implemented")
+    enqueue: () => console.log("Not implemented"),
+    nextTrack: () => console.log("Not implemented"),
+    playAlbum: () => console.log("Not implemented")
   }
 };
 
