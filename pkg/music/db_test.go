@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func initClient() Client {
+func initClientDB() Client {
 	config.Config = config.ConfigStruct{MinioHost: "localhost:9000", SqliteLocation: ":memory:"}
 
 	c := NewClient()
@@ -14,7 +14,7 @@ func initClient() Client {
 }
 
 func TestIndexMusicFile(t *testing.T) {
-	c := initClient()
+	c := initClientDB()
 
 	err := c.IndexMusicFile("Father John Misty/God’s Favorite Customer/02 Mr. Tillman.flac")
 
@@ -45,7 +45,7 @@ func TestIndexMusicFile(t *testing.T) {
 }
 
 func TestIndexMusicFileRelations(t *testing.T) {
-	c := initClient()
+	c := initClientDB()
 
 	err := c.IndexMusicFile("Father John Misty/Pure Comedy/02 Total Entertainment Forever.flac")
 
@@ -68,7 +68,7 @@ func TestIndexMusicFileRelations(t *testing.T) {
 }
 
 func TestIndexMusicFileNonMusicFails(t *testing.T) {
-	c := initClient()
+	c := initClientDB()
 
 	err := c.IndexMusicFile("Father John Misty/Pure Comedy/cover.jpg")
 
@@ -84,7 +84,7 @@ func TestIndexMusicFileNonMusicFails(t *testing.T) {
 }
 
 func TestAlbumIsOnlyIndexedOnce(t *testing.T) {
-	c := initClient()
+	c := initClientDB()
 
 	err := c.IndexMusicFile("Father John Misty/God’s Favorite Customer/08 God’s Favorite Customer.flac")
 	if err != nil {
@@ -103,7 +103,7 @@ func TestAlbumIsOnlyIndexedOnce(t *testing.T) {
 }
 
 func TestArtistIsOnlyIndexedOnce(t *testing.T) {
-	c := initClient()
+	c := initClientDB()
 
 	err := c.IndexMusicFile("Father John Misty/God’s Favorite Customer/08 God’s Favorite Customer.flac")
 	if err != nil {
