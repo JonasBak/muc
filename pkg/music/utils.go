@@ -2,12 +2,9 @@ package music
 
 import (
 	"fmt"
-	"github.com/JonasBak/infrastucture/containers/muc/pkg/config"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	"net/url"
 	"os"
-	"time"
 )
 
 func GetSchema() string {
@@ -46,26 +43,6 @@ func isMusicFile(filetype string) bool {
 		}
 	}
 	return false
-}
-
-func (c Client) getSafeFileUrl(key string, fileUrl *string, expiry *time.Time) (bool, *string, *time.Time, error) {
-	if fileUrl != nil && expiry != nil && expiry.Sub(time.Now()) > time.Duration(config.Config.MucLinkMargin)*time.Minute {
-		return false, fileUrl, nil, nil
-	}
-	ttl := time.Duration(config.Config.MucLinkTtl) * time.Minute
-	newExpiry := time.Now().Add(ttl)
-
-	reqParams := make(url.Values)
-	newUrl, err := c.mc.PresignedGetObject(config.Config.MinioBucket, key, ttl, reqParams)
-	if err != nil {
-		log.WithFields(log.Fields{"error": err.Error()}).Warn("Could not get prisigned object url!")
-		return false, nil, nil, err
-	}
-
-	log.WithFields(log.Fields{"key": key}).Debug("Generated new presigned url")
-
-	newUrlString := newUrl.String()
-	return true, &newUrlString, &newExpiry, nil
 }
 
 func (c Client) GetPlaybackUrl(t Track) (string, error) {
