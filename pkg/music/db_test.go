@@ -23,7 +23,7 @@ func TestIndexMusicFile(t *testing.T) {
 	}
 
 	var track Track
-	if c.db.Where("title = ?", "Mr. Tillman").First(&track).RecordNotFound() {
+	if c.DB.Where("title = ?", "Mr. Tillman").First(&track).RecordNotFound() {
 		t.Errorf("Could not find track in database after trying to index")
 	}
 	if track.Filetype != "flac" {
@@ -34,12 +34,12 @@ func TestIndexMusicFile(t *testing.T) {
 	}
 
 	var album Album
-	if c.db.Where("title = ?", "God’s Favorite Customer").First(&album).RecordNotFound() {
+	if c.DB.Where("title = ?", "God’s Favorite Customer").First(&album).RecordNotFound() {
 		t.Errorf("Could not find album in database after trying to index")
 	}
 
 	var artist Artist
-	if c.db.Where("name = ?", "Father John Misty").First(&artist).RecordNotFound() {
+	if c.DB.Where("name = ?", "Father John Misty").First(&artist).RecordNotFound() {
 		t.Errorf("Could not find artist in database after trying to index")
 	}
 }
@@ -54,7 +54,7 @@ func TestIndexMusicFileRelations(t *testing.T) {
 	}
 
 	var track Track
-	if c.db.Where("title = ?", "Total Entertainment Forever").Preload("Album").Preload("Album.Artist").First(&track).RecordNotFound() {
+	if c.DB.Where("title = ?", "Total Entertainment Forever").Preload("Album").Preload("Album.Artist").First(&track).RecordNotFound() {
 		t.Errorf("Could not find track in database after trying to index")
 	}
 
@@ -96,7 +96,7 @@ func TestAlbumIsOnlyIndexedOnce(t *testing.T) {
 	}
 
 	var count int
-	c.db.Model(&Album{}).Where("title = ?", "God’s Favorite Customer").Count(&count)
+	c.DB.Model(&Album{}).Where("title = ?", "God’s Favorite Customer").Count(&count)
 	if count != 1 {
 		t.Errorf("Album indexed %d times, should be 1", count)
 	}
@@ -115,7 +115,7 @@ func TestArtistIsOnlyIndexedOnce(t *testing.T) {
 	}
 
 	var count int
-	c.db.Model(&Artist{}).Where("name = ?", "Father John Misty").Count(&count)
+	c.DB.Model(&Artist{}).Where("name = ?", "Father John Misty").Count(&count)
 	if count != 1 {
 		t.Errorf("Artist indexed %d times, should be 1", count)
 	}

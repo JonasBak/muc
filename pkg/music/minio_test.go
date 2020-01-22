@@ -28,7 +28,7 @@ func subtestSyncMusicFiles(c Client) func(*testing.T) {
 		}
 
 		var artist Artist
-		if c.db.Where("name = ?", "Phlake").Preload("Albums").Preload("Albums.Tracks").First(&artist).RecordNotFound() {
+		if c.DB.Where("name = ?", "Phlake").Preload("Albums").Preload("Albums.Tracks").First(&artist).RecordNotFound() {
 			t.Error("Couldn't find artist 'Phlake' in database after syncing")
 		}
 		if len(artist.Albums) != 1 {
@@ -39,7 +39,7 @@ func subtestSyncMusicFiles(c Client) func(*testing.T) {
 		}
 
 		artist = Artist{}
-		if c.db.Where("name = ?", "Mikhael Paskalev").Preload("Albums").Preload("Albums.Tracks").First(&artist).RecordNotFound() {
+		if c.DB.Where("name = ?", "Mikhael Paskalev").Preload("Albums").Preload("Albums.Tracks").First(&artist).RecordNotFound() {
 			t.Error("Couldn't find artist 'Mikhael Paskalev' in database after syncing")
 		}
 		if len(artist.Albums) != 1 {
@@ -59,7 +59,7 @@ func TestMinio(t *testing.T) {
 	c := initMinio(t)
 
 	var count int
-	c.db.Model(&Track{}).Count(&count)
+	c.DB.Model(&Track{}).Count(&count)
 	if count != 0 {
 		t.Errorf("There is supposed to be 0 tracks in the database when starting, but there is %d", count)
 	}

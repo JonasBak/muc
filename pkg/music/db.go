@@ -57,13 +57,13 @@ func (c Client) IndexArtist(subs []string) (*Artist, error) {
 
 	object_prefix := fmt.Sprintf("%s/", subs[1])
 
-	if !c.db.Where("object_prefix = ?", object_prefix).First(&artist).RecordNotFound() {
+	if !c.DB.Where("object_prefix = ?", object_prefix).First(&artist).RecordNotFound() {
 		return &artist, nil
 	}
 
 	artist.Name = subs[1]
 	artist.ObjectPrefix = object_prefix
-	c.db.Create(&artist)
+	c.DB.Create(&artist)
 
 	return &artist, nil
 }
@@ -73,7 +73,7 @@ func (c Client) IndexAlbum(subs []string) (*Album, error) {
 
 	object_prefix := fmt.Sprintf("%s/%s/", subs[1], subs[2])
 
-	if !c.db.Where("object_prefix = ?", object_prefix).First(&album).RecordNotFound() {
+	if !c.DB.Where("object_prefix = ?", object_prefix).First(&album).RecordNotFound() {
 		return &album, nil
 	}
 
@@ -85,7 +85,7 @@ func (c Client) IndexAlbum(subs []string) (*Album, error) {
 	album.Title = subs[2]
 	album.Artist = *artist
 	album.ObjectPrefix = object_prefix
-	c.db.Create(&album)
+	c.DB.Create(&album)
 
 	return &album, nil
 }
@@ -104,7 +104,7 @@ func (c Client) IndexMusicFile(objectKey string) error {
 
 	var count int
 
-	c.db.Model(&Track{}).Where("object_key = ?", objectKey).Count(&count)
+	c.DB.Model(&Track{}).Where("object_key = ?", objectKey).Count(&count)
 
 	if count != 0 {
 		log.WithFields(log.Fields{"key": objectKey}).Debug("Object already indexed")
@@ -123,7 +123,7 @@ func (c Client) IndexMusicFile(objectKey string) error {
 	}
 
 	track := Track{Album: *album, Title: subs[4], ObjectKey: objectKey, Filetype: subs[5], TrackIndex: trackIndex}
-	c.db.Create(&track)
+	c.DB.Create(&track)
 	log.WithFields(log.Fields{"key": objectKey}).Debug("Object indexed")
 
 	return nil

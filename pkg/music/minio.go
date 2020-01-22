@@ -16,7 +16,7 @@ func (c Client) getSafeFileUrl(key string, fileUrl *string, expiry *time.Time) (
 	newExpiry := time.Now().Add(ttl)
 
 	reqParams := make(url.Values)
-	newUrl, err := c.mc.PresignedGetObject(config.Config.MinioBucket, key, ttl, reqParams)
+	newUrl, err := c.MC.PresignedGetObject(config.Config.MinioBucket, key, ttl, reqParams)
 	if err != nil {
 		log.WithFields(log.Fields{"error": err.Error()}).Warn("Could not get prisigned object url!")
 		return false, nil, nil, err
@@ -33,7 +33,7 @@ func (c Client) SyncMusicFiles() error {
 
 	defer close(doneCh)
 
-	objectCh := c.mc.ListObjectsV2(config.Config.MinioBucket, "", true, doneCh)
+	objectCh := c.MC.ListObjectsV2(config.Config.MinioBucket, "", true, doneCh)
 	for object := range objectCh {
 		if object.Err != nil {
 			log.WithFields(log.Fields{"error": object.Err.Error()}).Fatal("Failed to connect to minio")

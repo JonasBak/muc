@@ -56,7 +56,7 @@ func (c Client) GetPlaybackUrl(t Track) (string, error) {
 
 	t.UrlCache = playbackUrl
 	t.UrlCacheExpires = expiry
-	c.db.Save(&t)
+	c.DB.Save(&t)
 
 	return *playbackUrl, nil
 }
@@ -73,7 +73,7 @@ func (c Client) GetCoverUrl(a Album) (string, error) {
 
 	a.UrlCache = coverUrl
 	a.UrlCacheExpires = expiry
-	c.db.Save(&a)
+	c.DB.Save(&a)
 
 	return *coverUrl, nil
 }

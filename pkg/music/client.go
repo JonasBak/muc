@@ -6,12 +6,12 @@ import (
 )
 
 type Client struct {
-	mc *minio.Client
-	db *gorm.DB
+	MC *minio.Client
+	DB *gorm.DB
 }
 
 // TODO close
 
 func NewClient() Client {
-	return Client{mc: GetMinioClient(), db: GetGormClient()}
+	return Client{MC: GetMinioClient(), DB: GetGormClient()}
 }

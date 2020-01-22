@@ -35,7 +35,7 @@ func (t Track) ALBUM(c context.Context) Album {
 	log.Debug("Resolving track.album from db")
 	client := c.Value("mucClient").(*Client)
 	var album Album
-	client.db.Model(&t).Related(&album)
+	client.DB.Model(&t).Related(&album)
 	return album
 }
 
@@ -50,7 +50,7 @@ func (a Album) ARTIST(c context.Context) Artist {
 	log.Debug("Resolving album.artist from db")
 	client := c.Value("mucClient").(*Client)
 	var artist Artist
-	client.db.Model(&a).Related(&artist)
+	client.DB.Model(&a).Related(&artist)
 	return artist
 }
 
@@ -61,7 +61,7 @@ func (a Album) TRACKS(c context.Context) []Track {
 	log.Debug("Resolving album.tracks from db")
 	client := c.Value("mucClient").(*Client)
 	var tracks []Track
-	client.db.Model(&a).Related(&tracks)
+	client.DB.Model(&a).Related(&tracks)
 	return tracks
 }
 
@@ -81,7 +81,7 @@ func (a Artist) ALBUMS(c context.Context) []Album {
 	log.Debug("Resolving artist.albums from db")
 	client := c.Value("mucClient").(*Client)
 	var albums []Album
-	client.db.Model(&a).Related(&albums)
+	client.DB.Model(&a).Related(&albums)
 	return albums
 }
 
@@ -95,13 +95,13 @@ func NewResolver(c *Client) Resolver {
 
 func (r *Resolver) Tracks() []Track {
 	var tracks []Track
-	r.c.db.Preload("Album").Preload("Album.Artist").Find(&tracks)
+	r.c.DB.Preload("Album").Preload("Album.Artist").Find(&tracks)
 	return tracks
 }
 
 func (r *Resolver) Track(args struct{ TrackId graphql.ID }) (Track, error) {
 	var track Track
-	if r.c.db.Where("id = ?", args.TrackId).Preload("Album").Preload("Album.Artist").First(&track).RecordNotFound() {
+	if r.c.DB.Where("id = ?", args.TrackId).Preload("Album").Preload("Album.Artist").First(&track).RecordNotFound() {
 		return Track{}, apiError{Code: "NotFound", Message: fmt.Sprintf("Could not get track with id %s", args.TrackId)}
 	}
 	return track, nil
@@ -109,13 +109,13 @@ func (r *Resolver) Track(args struct{ TrackId graphql.ID }) (Track, error) {
 
 func (r *Resolver) Albums() []Album {
 	var albums []Album
-	r.c.db.Preload("Tracks").Preload("Artist").Find(&albums)
+	r.c.DB.Preload("Tracks").Preload("Artist").Find(&albums)
 	return albums
 }
 
 func (r *Resolver) Album(args struct{ AlbumId graphql.ID }) (Album, error) {
 	var album Album
-	if r.c.db.Where("id = ?", args.AlbumId).Preload("Tracks").Preload("Artist").First(&album).RecordNotFound() {
+	if r.c.DB.Where("id = ?", args.AlbumId).Preload("Tracks").Preload("Artist").First(&album).RecordNotFound() {
 		return Album{}, apiError{Code: "NotFound", Message: fmt.Sprintf("Could not get album with id %s", args.AlbumId)}
 	}
 	return album, nil
@@ -123,13 +123,13 @@ func (r *Resolver) Album(args struct{ AlbumId graphql.ID }) (Album, error) {
 
 func (r *Resolver) Artists() []Artist {
 	var artists []Artist
-	r.c.db.Preload("Albums").Preload("Albums.Tracks").Find(&artists)
+	r.c.DB.Preload("Albums").Preload("Albums.Tracks").Find(&artists)
 	return artists
 }
 
 func (r *Resolver) Artist(args struct{ ArtistId graphql.ID }) (Artist, error) {
 	var artist Artist
-	if r.c.db.Where("id = ?", args.ArtistId).Preload("Albums").Preload("Albums.Tracks").First(&artist).RecordNotFound() {
+	if r.c.DB.Where("id = ?", args.ArtistId).Preload("Albums").Preload("Albums.Tracks").First(&artist).RecordNotFound() {
 		return Artist{}, apiError{Code: "NotFound", Message: fmt.Sprintf("Could not get artist with id %s", args.ArtistId)}
 	}
 	return artist, nil
@@ -154,11 +154,11 @@ func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) (Playback, error)
 
 func (r *Resolver) Stats() Stats {
 	var ArtistCount int32
-	r.c.db.Model(&Artist{}).Count(&ArtistCount)
+	r.c.DB.Model(&Artist{}).Count(&ArtistCount)
 	var AlbumCount int32
-	r.c.db.Model(&Album{}).Count(&AlbumCount)
+	r.c.DB.Model(&Album{}).Count(&AlbumCount)
 	var TrackCount int32
-	r.c.db.Model(&Track{}).Count(&TrackCount)
+	r.c.DB.Model(&Track{}).Count(&TrackCount)
 
 	return Stats{ArtistCount, AlbumCount, TrackCount}
 }
