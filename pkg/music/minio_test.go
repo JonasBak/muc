@@ -12,9 +12,6 @@ import (
 
 func initMinio(t *testing.T) Client {
 	t.Helper()
-	if os.Getenv("TEST_AGAINST_MINIO") != "true" {
-		t.Skip("skipping, run with 'TEST_AGAINST_MINIO=true' to include")
-	}
 	os.Setenv("CONFIG_FILE", "../../test/config.test.yml")
 	config.ReadConfig()
 	config.Config.MinioBucket = "testing-minio"
@@ -55,6 +52,10 @@ func subtestSyncMusicFiles(c Client) func(*testing.T) {
 }
 
 func TestMinio(t *testing.T) {
+	if os.Getenv("TEST_AGAINST_MINIO") != "true" {
+		t.Skip("skipping, run with 'TEST_AGAINST_MINIO=true' to include")
+	}
+
 	c := initMinio(t)
 
 	var count int
@@ -79,6 +80,78 @@ func TestMinio(t *testing.T) {
 		diff := math.Abs(float64(expectedExpiry.Sub(*expires) / time.Minute))
 		if diff > 1 {
 			t.Errorf("Expiry is too far off what is expected, diff: %f", diff)
+		}
+		resp, err := http.Get(*url)
+		if err != nil {
+			t.Errorf("Failed to GET url: %s, error: %s", *url, err.Error())
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if string(body) != "test\n" {
+			t.Errorf("Request body didn't match, expected 'test\\n' was '%s'", body)
+		}
+	})
+
+	t.Run("Test safe url doesn't generate new from getSafeFileUrl", func(t *testing.T) {
+		ttl := time.Duration(config.Config.MucLinkMargin*2) * time.Minute
+		expiry := time.Now().Add(ttl)
+
+		expectedUrl := "somethingrandom"
+
+		updated, url, _, err := c.getSafeFileUrl("Phlake/Slush Hours/02 Angel Zoo.flac", &expectedUrl, &expiry)
+		if err != nil {
+			t.Error(err.Error())
+		}
+		if updated {
+			t.Error("Link shouldn't return updated when not expired")
+		}
+		if url != &expectedUrl {
+			t.Error("The same url should be returned when not expired")
+		}
+	})
+
+	t.Run("Test expired url generates new from getSafeFileUrl", func(t *testing.T) {
+		ttl := -time.Duration(20) * time.Minute
+		expiry := time.Now().Add(ttl)
+
+		expectedUrl := "somethingrandom"
+
+		updated, url, _, err := c.getSafeFileUrl("Phlake/Slush Hours/02 Angel Zoo.flac", &expectedUrl, &expiry)
+		if err != nil {
+			t.Error(err.Error())
+		}
+		if !updated {
+			t.Error("Link should return updated when expired")
+		}
+		if url == &expectedUrl {
+			t.Error("A new url should be returned when old is expired")
+		}
+		resp, err := http.Get(*url)
+		if err != nil {
+			t.Errorf("Failed to GET url: %s, error: %s", *url, err.Error())
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if string(body) != "test\n" {
+			t.Errorf("Request body didn't match, expected 'test\\n' was '%s'", body)
+		}
+	})
+
+	t.Run("Test url expiry within margin generates new from getSafeFileUrl", func(t *testing.T) {
+		ttl := time.Duration(config.Config.MucLinkMargin/2) * time.Minute
+		expiry := time.Now().Add(ttl)
+
+		expectedUrl := "somethingrandom"
+
+		updated, url, _, err := c.getSafeFileUrl("Phlake/Slush Hours/02 Angel Zoo.flac", &expectedUrl, &expiry)
+		if err != nil {
+			t.Error(err.Error())
+		}
+		if !updated {
+			t.Error("Link should return updated when expired")
+		}
+		if url == &expectedUrl {
+			t.Error("A new url should be returned when old is expired")
 		}
 		resp, err := http.Get(*url)
 		if err != nil {
