@@ -2,8 +2,12 @@ package music
 
 import (
 	"github.com/JonasBak/infrastucture/containers/muc/pkg/config"
+	"io/ioutil"
+	"math"
+	"net/http"
 	"os"
 	"testing"
+	"time"
 )
 
 func initMinio(t *testing.T) Client {
@@ -60,4 +64,30 @@ func TestMinio(t *testing.T) {
 	}
 
 	t.Run("Test syncMusicFiles", subtestSyncMusicFiles(c))
+
+	t.Run("Test new url from getSafeFileUrl", func(t *testing.T) {
+		ttl := time.Duration(config.Config.MucLinkTtl) * time.Minute
+		expectedExpiry := time.Now().Add(ttl)
+
+		updated, url, expires, err := c.getSafeFileUrl("Phlake/Slush Hours/02 Angel Zoo.flac", nil, nil)
+		if err != nil {
+			t.Error(err.Error())
+		}
+		if !updated {
+			t.Error("Link should return updated when creating new")
+		}
+		diff := math.Abs(float64(expectedExpiry.Sub(*expires) / time.Minute))
+		if diff > 1 {
+			t.Errorf("Expiry is too far off what is expected, diff: %f", diff)
+		}
+		resp, err := http.Get(*url)
+		if err != nil {
+			t.Errorf("Failed to GET url: %s, error: %s", *url, err.Error())
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if string(body) != "test\n" {
+			t.Errorf("Request body didn't match, expected 'test\\n' was '%s'", body)
+		}
+	})
 }
