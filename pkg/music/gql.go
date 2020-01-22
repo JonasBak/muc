@@ -14,6 +14,12 @@ type Playback struct {
 	Filetype string
 }
 
+type Stats struct {
+	ArtistCount int32
+	AlbumCount  int32
+	TrackCount  int32
+}
+
 func (t Track) ID() graphql.ID {
 	return graphql.ID(fmt.Sprint(t.Model.ID))
 }
@@ -144,4 +150,22 @@ func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) (Playback, error)
 	}
 
 	return Playback{Track: track, Url: playbackUrl, CoverUrl: coverUrl, Filetype: track.Filetype}, err
+}
+
+func (r *Resolver) Stats() Stats {
+	var ArtistCount int32
+	r.c.db.Model(&Artist{}).Count(&ArtistCount)
+	var AlbumCount int32
+	r.c.db.Model(&Album{}).Count(&AlbumCount)
+	var TrackCount int32
+	r.c.db.Model(&Track{}).Count(&TrackCount)
+
+	return Stats{ArtistCount, AlbumCount, TrackCount}
+}
+
+func (r *Resolver) Rescan() Stats {
+	initalStats := r.Stats()
+	r.c.SyncMusicFiles()
+	newStats := r.Stats()
+	return Stats{ArtistCount: newStats.ArtistCount - initalStats.ArtistCount, AlbumCount: newStats.AlbumCount - initalStats.AlbumCount, TrackCount: newStats.TrackCount - initalStats.TrackCount}
 }

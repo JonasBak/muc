@@ -1,5 +1,6 @@
 schema {
   query: Query
+  mutation: Mutation
 }
 type Query {
   tracks: [Track!]!
@@ -9,6 +10,11 @@ type Query {
   artists: [Artist!]!
   artist(artistId: ID!): Artist!
   playback(trackId: ID!): Playback!
+
+  stats: Stats!
+}
+type Mutation {
+  rescan: Stats!
 }
 type Track {
   id: ID!
@@ -33,4 +39,9 @@ type Playback {
   url: String!
   coverUrl: String!
   filetype: String!
+}
+type Stats {
+  artistCount: Int!
+  albumCount: Int!
+  trackCount: Int!
 }

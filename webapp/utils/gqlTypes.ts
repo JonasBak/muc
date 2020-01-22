@@ -24,6 +24,11 @@ export type Artist = {
   albums: Array<Album>,
 };
 
+export type Mutation = {
+   __typename?: 'Mutation',
+  rescan: Stats,
+};
+
 export type Playback = {
    __typename?: 'Playback',
   track: Track,
@@ -41,6 +46,7 @@ export type Query = {
   artists: Array<Artist>,
   artist: Artist,
   playback: Playback,
+  stats: Stats,
 };
 
 
@@ -61,6 +67,13 @@ export type QueryArtistArgs = {
 
 export type QueryPlaybackArgs = {
   trackId: Scalars['ID']
+};
+
+export type Stats = {
+   __typename?: 'Stats',
+  artistCount: Scalars['Int'],
+  albumCount: Scalars['Int'],
+  trackCount: Scalars['Int'],
 };
 
 export type Track = {

@@ -35,8 +35,6 @@ func main() {
 
 	c := music.NewClient()
 
-	c.SyncMusicFiles()
-
 	log.Info("Creating muc server")
 
 	router := mux.NewRouter()
