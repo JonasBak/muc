@@ -11,7 +11,7 @@ export type PlayerState = {
 export type ListType = {
   type: "ALBUM";
   album: Album;
-  currentIndex: number;
+  nextIndex: number;
 };
 
 export type State = {

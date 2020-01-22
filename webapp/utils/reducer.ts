@@ -22,7 +22,7 @@ export type Action =
       type: "PLAY_ALBUM";
       playback: Playback;
       album: Album;
-      currentIndex: number;
+      nextIndex: number;
     };
 
 export const reducer = (state: State, action: Action): State => {
@@ -57,8 +57,8 @@ export const reducer = (state: State, action: Action): State => {
       } else if (state.currentList.type === "ALBUM") {
         currentList = {
           ...state.currentList,
-          currentIndex:
-            (state.currentList.currentIndex + 1) %
+          nextIndex:
+            (state.currentList.nextIndex + 1) %
             state.currentList.album.tracks.length
         };
       }
@@ -85,7 +85,7 @@ export const reducer = (state: State, action: Action): State => {
         currentList: {
           type: "ALBUM",
           album: action.album,
-          currentIndex: action.currentIndex
+          nextIndex: action.nextIndex
         }
       };
     }

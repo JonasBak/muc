@@ -87,7 +87,7 @@ export const nextTrack = (
     switch (state.currentList.type) {
       case "ALBUM": {
         const playback = await getPlayback(
-          state.currentList.album.tracks[state.currentList.currentIndex].id
+          state.currentList.album.tracks[state.currentList.nextIndex].id
         );
         dispatch({
           type: "NEXT_TRACK",
@@ -108,7 +108,7 @@ export const playAlbum = (
       type: "PLAY_ALBUM",
       playback,
       album,
-      currentIndex
+      nextIndex: currentIndex + 1
     });
   };
 };
