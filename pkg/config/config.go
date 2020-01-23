@@ -12,9 +12,10 @@ var Config ConfigStruct
 type ConfigStruct struct {
 	LogLevel string `yaml:"log-level" envconfig:"LOG_LEVEL"`
 
-	MucPort       uint `yaml:"muc-port" envconfig:"MUC_PORT"`
-	MucLinkTtl    uint `yaml:"muc-link-ttl" envconfig:"MUC_LINK_TTL"`
-	MucLinkMargin uint `yaml:"muc-link-margin" envconfig:"MUC_LINK_MARGIN"`
+	MucPort       uint   `yaml:"muc-port" envconfig:"MUC_PORT"`
+	MucLinkTtl    uint   `yaml:"muc-link-ttl" envconfig:"MUC_LINK_TTL"`
+	MucLinkMargin uint   `yaml:"muc-link-margin" envconfig:"MUC_LINK_MARGIN"`
+	MucCookieName string `yaml:"muc-cookie-name" envconfig:"MUC_COOKIE_NAME"`
 
 	MinioHost   string `yaml:"minio-host" envconfig:"MINIO_HOST"`
 	MinioAccess string `yaml:"minio-access" envconfig:"MINIO_ACCESS"`

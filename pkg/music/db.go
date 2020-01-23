@@ -12,6 +12,21 @@ import (
 	"time"
 )
 
+type User struct {
+	gorm.Model
+	Username string `gorm:"not null;unique"`
+	Hash     string `gorm:"not null"`
+
+	Admin bool `gorm:"not null;default:false"`
+}
+
+type Session struct {
+	gorm.Model
+	Token  string `gorm:"not null;unique"`
+	UserID uint   `gorm:"not null"`
+	User   User   `gorm:"not null"`
+}
+
 type Artist struct {
 	gorm.Model
 	Name         string `gorm:"not null"`
@@ -134,6 +149,6 @@ func GetGormClient() *gorm.DB {
 	if err != nil {
 		log.WithFields(log.Fields{"error": err.Error()}).Fatal("Failed to connect to database")
 	}
-	db.AutoMigrate(&Track{}, &Album{}, &Artist{})
+	db.AutoMigrate(&User{}, &Session{}, &Track{}, &Album{}, &Artist{})
 	return db
 }

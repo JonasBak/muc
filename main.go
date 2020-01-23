@@ -35,15 +35,20 @@ func main() {
 
 	c := music.NewClient()
 
+	c.NewUser("admin", "admin", true)
+
 	log.Info("Creating muc server")
 
 	router := mux.NewRouter()
 
-	rootHandler := applyMiddleware(http.HandlerFunc(api.GiQLHandler()))
+	rootHandler := applyMiddleware(api.GiQLHandler())
 	router.Handle("/", rootHandler)
 
-	queryHandler := applyMiddleware(http.HandlerFunc(api.QueryHandler(&c)))
+	queryHandler := applyMiddleware(api.AuthMiddleware(&c, false, api.QueryHandler(&c)))
 	router.Handle("/query", queryHandler)
+
+	loginHandler := applyMiddleware(api.LoginHandler(&c))
+	router.Handle("/login", loginHandler)
 
 	log.WithFields(log.Fields{"port": config.Config.MucPort}).Info("Starting muc api")
 

@@ -1,5 +1,10 @@
 package api
 
+type Credentials struct {
+	Password string `json:"password"`
+	Username string `json:"username"`
+}
+
 var graphiql = []byte(`
 <!DOCTYPE html>
 <html>
