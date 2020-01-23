@@ -43,12 +43,12 @@ export const initialState: State = {
 export const initialContextValue: Context = {
   state: initialState,
   dispatchers: {
-    playTrack: () => console.log("Not implemented"),
-    setPlayerState: () => console.log("Not implemented"),
-    togglePlaying: () => console.log("Not implemented"),
-    enqueue: () => console.log("Not implemented"),
-    nextTrack: () => console.log("Not implemented"),
-    playAlbum: () => console.log("Not implemented")
+    playTrack: () => console.error("Not implemented"),
+    setPlayerState: () => console.error("Not implemented"),
+    togglePlaying: () => console.error("Not implemented"),
+    enqueue: () => console.error("Not implemented"),
+    nextTrack: () => console.error("Not implemented"),
+    playAlbum: () => console.error("Not implemented")
   }
 };
 

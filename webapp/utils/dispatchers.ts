@@ -5,6 +5,7 @@ import {
   State,
   Dispatchers
 } from "utils/context";
+import { getAuthCookie } from "utils/auth";
 import { Track, Playback, Album } from "utils/gqlTypes";
 import { Action } from "utils/reducer";
 import { getPlayback } from "utils/req";
@@ -14,16 +15,21 @@ export const playTrack = (
   dispatch: (action: Action) => void
 ): Dispatchers["playTrack"] => {
   return async (trackId: string) => {
-    const playback = await getPlayback(trackId);
-    dispatch({
-      type: "SET_PLAYER_STATE",
-      value: {
-        playing: false,
-        duration: 0,
-        currentTime: 0,
-        playback
-      }
-    });
+    const auth = getAuthCookie();
+    const playbackResult = await getPlayback(auth, trackId);
+    if (playbackResult.type == "SUCCESS") {
+      dispatch({
+        type: "SET_PLAYER_STATE",
+        value: {
+          playing: false,
+          duration: 0,
+          currentTime: 0,
+          playback: playbackResult.data
+        }
+      });
+    } else {
+      console.error(playbackResult.data);
+    }
   };
 };
 
@@ -73,12 +79,17 @@ export const nextTrack = (
   dispatch: (action: Action) => void
 ): Dispatchers["nextTrack"] => {
   return async () => {
+    const auth = getAuthCookie();
     if (state.queue.length > 0) {
-      const playback = await getPlayback(state.queue[0].id);
-      dispatch({
-        type: "DEQUEUE",
-        value: playback
-      });
+      const playbackResult = await getPlayback(auth, state.queue[0].id);
+      if (playbackResult.type == "SUCCESS") {
+        dispatch({
+          type: "DEQUEUE",
+          value: playbackResult.data
+        });
+      } else {
+        console.error(playbackResult.data);
+      }
       return;
     }
     if (state.currentList === null) {
@@ -86,13 +97,18 @@ export const nextTrack = (
     }
     switch (state.currentList.type) {
       case "ALBUM": {
-        const playback = await getPlayback(
+        const playbackResult = await getPlayback(
+          auth,
           state.currentList.album.tracks[state.currentList.nextIndex].id
         );
-        dispatch({
-          type: "NEXT_TRACK",
-          value: playback
-        });
+        if (playbackResult.type == "SUCCESS") {
+          dispatch({
+            type: "NEXT_TRACK",
+            value: playbackResult.data
+          });
+        } else {
+          console.error(playbackResult.data);
+        }
       }
     }
   };
@@ -103,12 +119,20 @@ export const playAlbum = (
   dispatch: (action: Action) => void
 ): Dispatchers["playAlbum"] => {
   return async (album: Album, currentIndex: number) => {
-    const playback = await getPlayback(album.tracks[currentIndex].id);
-    dispatch({
-      type: "PLAY_ALBUM",
-      playback,
-      album,
-      nextIndex: currentIndex + 1
-    });
+    const auth = getAuthCookie();
+    const playbackResult = await getPlayback(
+      auth,
+      album.tracks[currentIndex].id
+    );
+    if (playbackResult.type == "SUCCESS") {
+      dispatch({
+        type: "PLAY_ALBUM",
+        playback: playbackResult.data,
+        album,
+        nextIndex: currentIndex + 1
+      });
+    } else {
+      console.error(playbackResult.data);
+    }
   };
 };

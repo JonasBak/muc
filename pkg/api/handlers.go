@@ -3,12 +3,10 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"github.com/JonasBak/infrastucture/containers/muc/pkg/config"
 	"github.com/JonasBak/infrastucture/containers/muc/pkg/music"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 	"net/http"
-	"time"
 )
 
 func QueryHandler(client *music.Client) http.Handler {
@@ -54,10 +52,6 @@ func LoginHandler(client *music.Client) http.Handler {
 			return
 		}
 
-		http.SetCookie(w, &http.Cookie{
-			Name:    config.Config.MucCookieName,
-			Value:   session.Token,
-			Expires: time.Now().Add(120 * time.Minute),
-		})
+		w.Write([]byte(session.Token))
 	})
 }

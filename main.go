@@ -14,7 +14,7 @@ import (
 
 func applyMiddleware(handler http.Handler) http.Handler {
 	// CORS
-	headersOk := handlers.AllowedHeaders([]string{"Authorization"})
+	headersOk := handlers.AllowedHeaders([]string{"muc-auth"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	handler = handlers.CORS(originsOk, headersOk, methodsOk)(handler)
@@ -44,7 +44,7 @@ func main() {
 	rootHandler := applyMiddleware(api.GiQLHandler())
 	router.Handle("/", rootHandler)
 
-	queryHandler := applyMiddleware(api.AuthMiddleware(&c, false, api.QueryHandler(&c)))
+	queryHandler := applyMiddleware(api.AuthMiddleware(&c, true, api.QueryHandler(&c)))
 	router.Handle("/query", queryHandler)
 
 	loginHandler := applyMiddleware(api.LoginHandler(&c))

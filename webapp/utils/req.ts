@@ -4,18 +4,27 @@ import fetch from "isomorphic-unfetch";
 import { API_URL } from "utils/config";
 
 type Response<T> = {
-  data: { [key in QueryTypeName]: T };
-  errors?: {
+  data?: { [key in QueryTypeName]: T };
+  errors?: Array<{
     message: string;
-  };
+  }>;
 };
+
+// TODO error type
+export type Result<T> =
+  | { type: "SUCCESS"; data: T }
+  | { type: "ERROR"; data: string };
 
 async function doQuery<T>(
   queryType: QueryTypeName,
-  args: Array<string> = []
+  args: Array<string> = [],
+  auth: string
 ): Promise<Response<T>> {
   const req = await fetch(`${API_URL}/query`, {
     method: "POST",
+    headers: {
+      "muc-auth": auth
+    },
     body: JSON.stringify({
       operationName: Queries[queryType].operationName,
       query: Queries[queryType].query,
@@ -24,29 +33,41 @@ async function doQuery<T>(
         .reduce((obj, a) => ({ ...obj, ...a }), {})
     })
   });
+  if (req.status < 200 || req.status >= 300) {
+    return {
+      errors: [{ message: `Error [${req.status}]: ${await req.text()}` }]
+    };
+  }
   return req.json() as Promise<Response<T>>;
 }
 
-export const getAlbums = async () => {
-  const res = await doQuery<Query["albums"]>("albums");
-  console.log(res.errors);
-  return res.data["albums"];
+async function queryWrapper<T>(
+  field: QueryTypeName,
+  args: Array<string>,
+  auth: string
+): Promise<Result<T>> {
+  const res = await doQuery<T>(field, args, auth);
+  if (res.data) {
+    return { type: "SUCCESS", data: res.data[field] };
+  }
+  if (res.errors) {
+    return { type: "ERROR", data: res.errors[0].message }; // Could comma seperate array
+  }
+  return { type: "ERROR", data: "Response couldn't be parsed" };
+}
+
+export const getAlbums = async (auth: string) => {
+  return queryWrapper<Query["albums"]>("albums", [], auth);
 };
 
-export const getAlbum = async (albumId: string) => {
-  const res = await doQuery<Query["album"]>("album", [albumId]);
-  console.log(res.errors);
-  return res.data["album"];
+export const getAlbum = async (auth: string, albumId: string) => {
+  return queryWrapper<Query["album"]>("album", [albumId], auth);
 };
 
-export const getTracks = async () => {
-  const res = await doQuery<Query["tracks"]>("tracks");
-  console.log(res.errors);
-  return res.data["tracks"];
+export const getTracks = async (auth: string) => {
+  return queryWrapper<Query["tracks"]>("tracks", [], auth);
 };
 
-export const getPlayback = async (trackId: string) => {
-  const res = await doQuery<Query["playback"]>("playback", [trackId]);
-  console.log(res.errors);
-  return res.data["playback"];
+export const getPlayback = async (auth: string, trackId: string) => {
+  return queryWrapper<Query["playback"]>("playback", [trackId], auth);
 };

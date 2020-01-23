@@ -2,7 +2,6 @@ log-level: debug
 muc-port: 3030
 muc-link-ttl: 1440
 muc-link-margin: 10
-muc-cookie-name: muc-auth
 minio-host: localhost:9000
 minio-access: replaceme
 minio-secret: replacemetoo

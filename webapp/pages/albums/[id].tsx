@@ -1,10 +1,13 @@
 import { Album } from "utils/gqlTypes";
+import { getAuthCookie } from "utils/auth";
 import { NextPageContext } from "next";
 import AlbumCover from "components/AlbumCover";
-import { getAlbum } from "utils/req";
+import { getAlbum, Result } from "utils/req";
 import Track from "components/Track";
+import LoginForm from "components/LoginForm";
 import { useContext } from "react";
 import { StoreContext } from "utils/context";
+import ErrorHandlerWrapper from "components/ErrorHandlerWrapper";
 
 type Props = {
   album: Album;
@@ -29,14 +32,31 @@ const AlbumPage = ({ album }: Props) => {
   );
 };
 
-AlbumPage.getInitialProps = async (
+const ErrorComponent = () => (
+  <div>
+    <LoginForm />
+  </div>
+);
+
+const AlbumPageWrapper = (wrappedProps: Result<Album>) => (
+  <ErrorHandlerWrapper
+    wrappedProps={wrappedProps}
+    Component={AlbumPage}
+    mapSuccessToProps={data => ({ album: data })}
+    ErrorComponent={ErrorComponent}
+  />
+);
+
+AlbumPageWrapper.getInitialProps = async (
   context: NextPageContext
-): Promise<Props> => {
+): Promise<Result<Album>> => {
   const id = context.query.id;
-  const album: Album = await getAlbum(typeof id === "string" ? id : id[0]);
-  return {
-    album
-  };
+  const albumResult = await getAlbum(
+    getAuthCookie(context),
+    typeof id === "string" ? id : id[0]
+  );
+
+  return albumResult;
 };
 
-export default AlbumPage;
+export default AlbumPageWrapper;
