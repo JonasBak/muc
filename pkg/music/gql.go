@@ -152,7 +152,12 @@ func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) (Playback, error)
 	return Playback{Track: track, Url: playbackUrl, CoverUrl: coverUrl, Filetype: track.Filetype}, err
 }
 
-func (r *Resolver) Stats() Stats {
+func (r *Resolver) Stats(c context.Context) (Stats, error) {
+	_, err := BasicPermission(c, Permissions{Login: true, Admin: true})
+	if err != nil {
+		return Stats{}, err
+	}
+
 	var ArtistCount int32
 	r.c.DB.Model(&Artist{}).Count(&ArtistCount)
 	var AlbumCount int32
@@ -160,12 +165,17 @@ func (r *Resolver) Stats() Stats {
 	var TrackCount int32
 	r.c.DB.Model(&Track{}).Count(&TrackCount)
 
-	return Stats{ArtistCount, AlbumCount, TrackCount}
+	return Stats{ArtistCount, AlbumCount, TrackCount}, nil
 }
 
-func (r *Resolver) Rescan() Stats {
-	initalStats := r.Stats()
+func (r *Resolver) Rescan(c context.Context) (Stats, error) {
+	_, err := BasicPermission(c, Permissions{Login: true, Admin: true})
+	if err != nil {
+		return Stats{}, err
+	}
+
+	initalStats, _ := r.Stats(c)
 	r.c.SyncMusicFiles()
-	newStats := r.Stats()
-	return Stats{ArtistCount: newStats.ArtistCount - initalStats.ArtistCount, AlbumCount: newStats.AlbumCount - initalStats.AlbumCount, TrackCount: newStats.TrackCount - initalStats.TrackCount}
+	newStats, _ := r.Stats(c)
+	return Stats{ArtistCount: newStats.ArtistCount - initalStats.ArtistCount, AlbumCount: newStats.AlbumCount - initalStats.AlbumCount, TrackCount: newStats.TrackCount - initalStats.TrackCount}, nil
 }

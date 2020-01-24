@@ -10,6 +10,9 @@ interface QueriesType {
   album: QueryType;
   tracks: QueryType;
   playback: QueryType;
+  stats: QueryType;
+
+  rescan: QueryType;
 }
 
 export type QueryTypeName = keyof QueriesType;
@@ -93,5 +96,31 @@ export const Queries: QueriesType = {
       }
     `,
     variables: ["trackId"]
+  },
+  stats: {
+    operationName: "Stats",
+    query: `
+      query Stats {
+        stats {
+          artistCount
+          albumCount
+          trackCount
+        }
+      }
+    `,
+    variables: []
+  },
+  rescan: {
+    operationName: "Rescan",
+    query: `
+      mutation Rescan {
+        rescan {
+          artistCount
+          albumCount
+          trackCount
+        }
+      }
+    `,
+    variables: []
   }
 };

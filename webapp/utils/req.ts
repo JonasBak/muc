@@ -1,5 +1,5 @@
 import { Queries, QueryTypeName } from "./gql";
-import { Query } from "./gqlTypes";
+import { Query, Mutation } from "./gqlTypes";
 import fetch from "isomorphic-unfetch";
 import { API_URL } from "utils/config";
 
@@ -47,11 +47,11 @@ async function queryWrapper<T>(
   auth: string
 ): Promise<Result<T>> {
   const res = await doQuery<T>(field, args, auth);
-  if (res.data) {
-    return { type: "SUCCESS", data: res.data[field] };
-  }
   if (res.errors) {
     return { type: "ERROR", data: res.errors[0].message }; // Could comma seperate array
+  }
+  if (res.data) {
+    return { type: "SUCCESS", data: res.data[field] };
   }
   return { type: "ERROR", data: "Response couldn't be parsed" };
 }
@@ -70,4 +70,12 @@ export const getTracks = async (auth: string) => {
 
 export const getPlayback = async (auth: string, trackId: string) => {
   return queryWrapper<Query["playback"]>("playback", [trackId], auth);
+};
+
+export const getStats = async (auth: string) => {
+  return queryWrapper<Query["stats"]>("stats", [], auth);
+};
+
+export const rescan = async (auth: string) => {
+  return queryWrapper<Mutation["rescan"]>("rescan", [], auth);
 };

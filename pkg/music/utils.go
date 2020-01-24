@@ -1,6 +1,7 @@
 package music
 
 import (
+	"context"
 	"fmt"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
@@ -8,6 +9,22 @@ import (
 	"io/ioutil"
 	"os"
 )
+
+type Permissions struct {
+	Login bool
+	Admin bool
+}
+
+func BasicPermission(c context.Context, perm Permissions) (*User, *apiError) {
+	user := c.Value("mucUser").(*User)
+	if perm.Login && user == nil {
+		return nil, &apiError{Code: "Unauthorized", Message: "Not logged in"}
+	}
+	if perm.Admin && !user.Admin {
+		return nil, &apiError{Code: "Forbidden", Message: "User needs admin access to do this"}
+	}
+	return user, nil
+}
 
 func (c Client) NewUser(username, password string, admin bool) (*User, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

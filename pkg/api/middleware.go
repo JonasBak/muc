@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func AuthMiddleware(c *music.Client, requreLogin bool, next http.Handler) http.Handler {
+func AuthMiddleware(c *music.Client, requireLogin bool, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		var user *music.User = nil
@@ -16,7 +16,7 @@ func AuthMiddleware(c *music.Client, requreLogin bool, next http.Handler) http.H
 		if !c.DB.Where("token = ?", token).Preload("User").First(&session).RecordNotFound() {
 			user = &session.User
 		}
-		if requreLogin && user == nil {
+		if requireLogin && user == nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
