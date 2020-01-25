@@ -19,6 +19,10 @@ const PanelLink = ({
 
 const links: Array<{ href: string; title: string }> = [
   {
+    href: "/playback",
+    title: "Playback"
+  },
+  {
     href: "/artists",
     title: "Artists"
   },

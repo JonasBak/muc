@@ -83,6 +83,7 @@ export const Queries: QueriesType = {
             album {
               id
               title
+              url
               artist {
                 id
                 name

@@ -21,7 +21,7 @@ const AlbumPage = ({ album }: Props) => {
   return (
     <div>
       <h1>{album.title}</h1>
-      <AlbumCover url={album.url} size={600} />
+      <AlbumCover url={album.url} size={400} />
       <div onClick={() => playAlbum(album, 0)}>Play</div>
       <div>
         {album.tracks.map(track => (
