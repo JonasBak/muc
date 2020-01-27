@@ -5,7 +5,8 @@ import {
   togglePlaying,
   enqueue,
   nextTrack,
-  playAlbum
+  playAlbum,
+  playPlaylist
 } from "utils/dispatchers";
 import { getPlayback } from "utils/req";
 import { useReducer } from "react";
@@ -25,7 +26,8 @@ const Container = ({ children }: { children: any }) => {
           togglePlaying: togglePlaying(state, dispatch),
           enqueue: enqueue(state, dispatch),
           nextTrack: nextTrack(state, dispatch),
-          playAlbum: playAlbum(state, dispatch)
+          playAlbum: playAlbum(state, dispatch),
+          playPlaylist: playPlaylist(state, dispatch)
         }
       }}
     >

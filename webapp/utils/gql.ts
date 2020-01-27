@@ -10,6 +10,8 @@ interface QueriesType {
   album: QueryType;
   tracks: QueryType;
   playback: QueryType;
+  playlists: QueryType;
+  playlist: QueryType;
   stats: QueryType;
 
   rescan: QueryType;
@@ -97,6 +99,38 @@ export const Queries: QueriesType = {
       }
     `,
     variables: ["trackId"]
+  },
+  playlists: {
+    operationName: "Playlists",
+    query: `
+      query Playlists {
+        playlists {
+          id
+          name
+          tracks {
+            id
+            title
+          }
+        }
+      }
+    `,
+    variables: []
+  },
+  playlist: {
+    operationName: "Playlist",
+    query: `
+      query Playlist($playlistId: ID!) {
+        playlist(playlistId: $playlistId) {
+          id
+          name
+          tracks {
+            id
+            title
+          }
+        }
+      }
+    `,
+    variables: ["playlistId"]
   },
   stats: {
     operationName: "Stats",

@@ -6,7 +6,7 @@ import {
   Dispatchers
 } from "utils/context";
 import { getAuthCookie } from "utils/auth";
-import { Track, Playback, Album } from "utils/gqlTypes";
+import { Track, Playback, Album, Playlist } from "utils/gqlTypes";
 import { Action } from "utils/reducer";
 import { getPlayback } from "utils/req";
 
@@ -109,6 +109,22 @@ export const nextTrack = (
         } else {
           console.error(playbackResult.data);
         }
+        break;
+      }
+      case "PLAYLIST": {
+        const playbackResult = await getPlayback(
+          auth,
+          state.currentList.playlist.tracks[state.currentList.nextIndex].id
+        );
+        if (playbackResult.type == "SUCCESS") {
+          dispatch({
+            type: "NEXT_TRACK",
+            value: playbackResult.data
+          });
+        } else {
+          console.error(playbackResult.data);
+        }
+        break;
       }
     }
   };
@@ -129,6 +145,29 @@ export const playAlbum = (
         type: "PLAY_ALBUM",
         playback: playbackResult.data,
         album,
+        nextIndex: currentIndex + 1
+      });
+    } else {
+      console.error(playbackResult.data);
+    }
+  };
+};
+
+export const playPlaylist = (
+  state: State,
+  dispatch: (action: Action) => void
+): Dispatchers["playPlaylist"] => {
+  return async (playlist: Playlist, currentIndex: number) => {
+    const auth = getAuthCookie();
+    const playbackResult = await getPlayback(
+      auth,
+      playlist.tracks[currentIndex].id
+    );
+    if (playbackResult.type == "SUCCESS") {
+      dispatch({
+        type: "PLAY_PLAYLIST",
+        playback: playbackResult.data,
+        playlist,
         nextIndex: currentIndex + 1
       });
     } else {

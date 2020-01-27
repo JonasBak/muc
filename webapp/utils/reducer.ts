@@ -1,4 +1,4 @@
-import { Playback, Track, Album } from "utils/gqlTypes";
+import { Playback, Track, Album, Playlist } from "utils/gqlTypes";
 import { State, PlayerState, initialState } from "utils/context";
 
 export type Action =
@@ -22,6 +22,12 @@ export type Action =
       type: "PLAY_ALBUM";
       playback: Playback;
       album: Album;
+      nextIndex: number;
+    }
+  | {
+      type: "PLAY_PLAYLIST";
+      playback: Playback;
+      playlist: Playlist;
       nextIndex: number;
     };
 
@@ -85,6 +91,22 @@ export const reducer = (state: State, action: Action): State => {
         currentList: {
           type: "ALBUM",
           album: action.album,
+          nextIndex: action.nextIndex
+        }
+      };
+    }
+    case "PLAY_PLAYLIST": {
+      return {
+        ...state,
+        playerState: {
+          playing: false,
+          duration: 0,
+          currentTime: 0,
+          playback: action.playback
+        },
+        currentList: {
+          type: "PLAYLIST",
+          playlist: action.playlist,
           nextIndex: action.nextIndex
         }
       };

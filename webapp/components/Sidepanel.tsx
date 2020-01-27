@@ -23,6 +23,10 @@ const links: Array<{ href: string; title: string }> = [
     title: "Playback"
   },
   {
+    href: "/playlists",
+    title: "Playlists"
+  },
+  {
     href: "/artists",
     title: "Artists"
   },

@@ -10,7 +10,6 @@ type Response<T> = {
   }>;
 };
 
-// TODO error type
 export type Result<T> =
   | { type: "SUCCESS"; data: T }
   | { type: "ERROR"; data: string };
@@ -70,6 +69,14 @@ export const getTracks = async (auth: string) => {
 
 export const getPlayback = async (auth: string, trackId: string) => {
   return queryWrapper<Query["playback"]>("playback", [trackId], auth);
+};
+
+export const getPlaylists = async (auth: string) => {
+  return queryWrapper<Query["playlists"]>("playlists", [], auth);
+};
+
+export const getPlaylist = async (auth: string, playlistId: string) => {
+  return queryWrapper<Query["playlist"]>("playlist", [playlistId], auth);
 };
 
 export const getStats = async (auth: string) => {
