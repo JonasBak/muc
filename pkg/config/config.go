@@ -16,6 +16,8 @@ type ConfigStruct struct {
 	MucLinkTtl    uint `yaml:"muc-link-ttl" envconfig:"MUC_LINK_TTL"`
 	MucLinkMargin uint `yaml:"muc-link-margin" envconfig:"MUC_LINK_MARGIN"`
 
+	AllowUnauthenticated bool `yaml:"allow-unauthenticated" envconfig:"ALLOW_UNAUTHENTICATED"`
+
 	MinioHost   string `yaml:"minio-host" envconfig:"MINIO_HOST"`
 	MinioAccess string `yaml:"minio-access" envconfig:"MINIO_ACCESS"`
 	MinioSecret string `yaml:"minio-secret" envconfig:"MINIO_SECRET"`
@@ -60,8 +62,6 @@ func ReadConfig() {
 
 	readFile(&config)
 	readEnv(&config)
-
-	fmt.Printf("Using config:\n%+v\n", config) // TODO only print in dev
 
 	Config = config
 }

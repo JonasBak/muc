@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { StoreContext, PlayerState, Dispatchers } from "utils/context";
+import Queue from "components/Queue";
 import PlayPauseButton from "components/PlayPauseButton";
 import AlbumCover from "components/AlbumCover";
 
@@ -67,6 +68,7 @@ const PlaybackScreen = () => {
     <div className="wrapper">
       <AlbumCover url={playerState.playback.track.album.url} size={600} />
       <TrackText playerState={playerState} handleClick={togglePlaying} />
+      <Queue queue={queue} />
       <style jsx>{`
         .wrapper {
           display: flex;
