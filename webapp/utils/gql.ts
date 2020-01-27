@@ -14,6 +14,7 @@ interface QueriesType {
   playlist: QueryType;
   stats: QueryType;
 
+  addToPlaylist: QueryType;
   rescan: QueryType;
 }
 
@@ -144,6 +145,22 @@ export const Queries: QueriesType = {
       }
     `,
     variables: []
+  },
+  addToPlaylist: {
+    operationName: "AddToPlaylist",
+    query: `
+      mutation AddToPlaylist($playlistId: ID!, $trackId: ID!) {
+        addToPlaylist(playlistId: $playlistId, trackId: $trackId) {
+          id
+          name
+          tracks {
+            id
+            title
+          }
+        }
+      }
+    `,
+    variables: ["playlistId", "trackId"]
   },
   rescan: {
     operationName: "Rescan",

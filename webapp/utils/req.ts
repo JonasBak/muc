@@ -83,6 +83,18 @@ export const getStats = async (auth: string) => {
   return queryWrapper<Query["stats"]>("stats", [], auth);
 };
 
+export const addToPlaylist = async (
+  auth: string,
+  playlistId: string,
+  trackId: string
+) => {
+  return queryWrapper<Mutation["addToPlaylist"]>(
+    "addToPlaylist",
+    [playlistId, trackId],
+    auth
+  );
+};
+
 export const rescan = async (auth: string) => {
   return queryWrapper<Mutation["rescan"]>("rescan", [], auth);
 };
