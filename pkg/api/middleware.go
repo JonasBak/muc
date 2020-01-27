@@ -11,7 +11,12 @@ func AuthMiddleware(c *music.Client, requireLogin bool, next http.Handler) http.
 		ctx := r.Context()
 		var user *music.User = nil
 
-		token := r.Header.Get("muc-auth")
+		token := ""
+		if cookie, err := r.Cookie("muc-auth"); err == nil {
+			token = cookie.Value
+		} else {
+			token = r.Header.Get("muc-auth")
+		}
 		var session music.Session
 		if !c.DB.Where("token = ?", token).Preload("User").First(&session).RecordNotFound() {
 			user = &session.User

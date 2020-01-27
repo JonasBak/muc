@@ -18,6 +18,8 @@ type User struct {
 	Hash     string `gorm:"not null"`
 
 	Admin bool `gorm:"not null;default:false"`
+
+	Playlists []Playlist
 }
 
 type Session struct {
@@ -25,6 +27,15 @@ type Session struct {
 	Token  string `gorm:"not null;unique"`
 	UserID uint   `gorm:"not null"`
 	User   User   `gorm:"not null"`
+}
+
+type Playlist struct {
+	gorm.Model
+	Name    string `gorm:"not null"`
+	OwnerID uint   `gorm:"not null"`
+	Owner   User   `gorm:"not null;foreignkey:OwnerID"`
+
+	Tracks []Track `gorm:"many2many:playlist_tracks;"`
 }
 
 type Artist struct {
@@ -149,6 +160,6 @@ func GetGormClient() *gorm.DB {
 	if err != nil {
 		log.WithFields(log.Fields{"error": err.Error()}).Fatal("Failed to connect to database")
 	}
-	db.AutoMigrate(&User{}, &Session{}, &Track{}, &Album{}, &Artist{})
+	db.AutoMigrate(&User{}, &Session{}, &Playlist{}, &Track{}, &Album{}, &Artist{})
 	return db
 }

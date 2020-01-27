@@ -85,6 +85,10 @@ func (a Artist) ALBUMS(c context.Context) []Album {
 	return albums
 }
 
+func (p Playlist) ID() graphql.ID {
+	return graphql.ID(fmt.Sprint(p.Model.ID))
+}
+
 type Resolver struct {
 	c *Client
 }
@@ -152,6 +156,20 @@ func (r *Resolver) Playback(args struct{ TrackId graphql.ID }) (Playback, error)
 	return Playback{Track: track, Url: playbackUrl, CoverUrl: coverUrl, Filetype: track.Filetype}, err
 }
 
+func (r *Resolver) Playlists() []Playlist {
+	var playlists []Playlist
+	r.c.DB.Preload("Tracks").Find(&playlists)
+	return playlists
+}
+
+func (r *Resolver) Playlist(args struct{ PlaylistId graphql.ID }) (Playlist, error) {
+	var playlist Playlist
+	if r.c.DB.Where("id = ?", args.PlaylistId).Preload("Tracks").First(&playlist).RecordNotFound() {
+		return Playlist{}, apiError{Code: "NotFound", Message: fmt.Sprintf("Could not get playlist with id %s", args.PlaylistId)}
+	}
+	return playlist, nil
+}
+
 func (r *Resolver) Stats(c context.Context) (Stats, error) {
 	_, err := BasicPermission(c, Permissions{Login: true, Admin: true})
 	if err != nil {
@@ -166,6 +184,42 @@ func (r *Resolver) Stats(c context.Context) (Stats, error) {
 	r.c.DB.Model(&Track{}).Count(&TrackCount)
 
 	return Stats{ArtistCount, AlbumCount, TrackCount}, nil
+}
+
+func (r *Resolver) NewPlaylist(c context.Context, args struct{ Name string }) (Playlist, error) {
+	user, err := BasicPermission(c, Permissions{Login: true, Admin: false})
+	if err != nil {
+		return Playlist{}, err
+	}
+	playlist := Playlist{Name: args.Name, Owner: *user}
+	if err := r.c.DB.Create(&playlist).Error; err != nil {
+		return Playlist{}, err
+	}
+	return playlist, nil
+}
+
+func (r *Resolver) AddToPlaylist(c context.Context, args struct {
+	PlaylistId graphql.ID
+	TrackId    graphql.ID
+}) (Playlist, error) {
+	user, err := BasicPermission(c, Permissions{Login: true, Admin: false})
+	if err != nil {
+		return Playlist{}, err
+	}
+	var playlist Playlist
+	if r.c.DB.Where("id = ?", args.PlaylistId).Preload("Tracks").First(&playlist).RecordNotFound() {
+		return Playlist{}, apiError{Code: "NotFound", Message: fmt.Sprintf("Could not get playlist with id %s", args.PlaylistId)}
+	}
+	if user.Model.ID != playlist.OwnerID {
+		return Playlist{}, apiError{Code: "NotAllowed", Message: fmt.Sprintf("You don't have access to the playlist with id %s", args.PlaylistId)}
+	}
+	track, errTrack := r.Track(struct{ TrackId graphql.ID }{TrackId: args.TrackId})
+	if err != nil {
+		return Playlist{}, errTrack
+	}
+	playlist.Tracks = append(playlist.Tracks, track)
+	r.c.DB.Save(&playlist)
+	return playlist, nil
 }
 
 func (r *Resolver) Rescan(c context.Context) (Stats, error) {

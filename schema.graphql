@@ -11,9 +11,15 @@ type Query {
   artist(artistId: ID!): Artist!
   playback(trackId: ID!): Playback!
 
+  playlists: [Playlist!]!
+  playlist(playlistId: ID!): Playlist!
+
   stats: Stats!
 }
 type Mutation {
+  newPlaylist(name: String!): Playlist!
+  addToPlaylist(playlistId: ID!, trackId: ID!): Playlist!
+
   rescan: Stats!
 }
 type Track {
@@ -39,6 +45,11 @@ type Playback {
   url: String!
   coverUrl: String!
   filetype: String!
+}
+type Playlist {
+  id: ID!
+  name: String!
+  tracks: [Track!]!
 }
 type Stats {
   artistCount: Int!

@@ -26,7 +26,20 @@ export type Artist = {
 
 export type Mutation = {
    __typename?: 'Mutation',
+  newPlaylist: Playlist,
+  addToPlaylist: Playlist,
   rescan: Stats,
+};
+
+
+export type MutationNewPlaylistArgs = {
+  name: Scalars['String']
+};
+
+
+export type MutationAddToPlaylistArgs = {
+  playlistId: Scalars['ID'],
+  trackId: Scalars['ID']
 };
 
 export type Playback = {
@@ -35,6 +48,13 @@ export type Playback = {
   url: Scalars['String'],
   coverUrl: Scalars['String'],
   filetype: Scalars['String'],
+};
+
+export type Playlist = {
+   __typename?: 'Playlist',
+  id: Scalars['ID'],
+  name: Scalars['String'],
+  tracks: Array<Track>,
 };
 
 export type Query = {
@@ -46,6 +66,8 @@ export type Query = {
   artists: Array<Artist>,
   artist: Artist,
   playback: Playback,
+  playlists: Array<Playlist>,
+  playlist: Playlist,
   stats: Stats,
 };
 
@@ -67,6 +89,11 @@ export type QueryArtistArgs = {
 
 export type QueryPlaybackArgs = {
   trackId: Scalars['ID']
+};
+
+
+export type QueryPlaylistArgs = {
+  playlistId: Scalars['ID']
 };
 
 export type Stats = {
