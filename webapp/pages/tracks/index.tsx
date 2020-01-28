@@ -15,7 +15,7 @@ const TrackHome = ({ tracks }: Props) => {
       <h1>Tracks</h1>
       <div className="container">
         {tracks.map(track => (
-          <Track key={track.id} track={track} />
+          <Track key={track.id} showArtist track={track} />
         ))}
       </div>
     </div>

@@ -101,6 +101,7 @@ export type Stats = {
   artistCount: Scalars['Int'],
   albumCount: Scalars['Int'],
   trackCount: Scalars['Int'],
+  userCount: Scalars['Int'],
 };
 
 export type Track = {

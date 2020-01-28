@@ -16,6 +16,7 @@ const AdminHome = ({ stats }: Props) => {
       <div>{`Artists: ${stats.artistCount}`}</div>
       <div>{`Albums: ${stats.albumCount}`}</div>
       <div>{`Tracks: ${stats.trackCount}`}</div>
+      <div>{`Users: ${stats.userCount}`}</div>
       <button onClick={() => rescan(getAuthCookie())}>Rescan</button>
     </div>
   );

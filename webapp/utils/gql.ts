@@ -54,6 +54,10 @@ export const Queries: QueriesType = {
           id
           title
           url
+          artist {
+            id
+            name
+          }
           tracks {
             id
             title
@@ -70,6 +74,14 @@ export const Queries: QueriesType = {
         tracks {
           id
           title
+          album {
+            id
+            title
+            artist {
+              id
+              name
+            }
+          }
         }
       }
     `,
@@ -127,6 +139,14 @@ export const Queries: QueriesType = {
           tracks {
             id
             title
+            album {
+              id
+              title
+              artist {
+                id
+                name
+              }
+            }
           }
         }
       }
@@ -141,6 +161,7 @@ export const Queries: QueriesType = {
           artistCount
           albumCount
           trackCount
+          adminCount
         }
       }
     `,

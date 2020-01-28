@@ -18,6 +18,8 @@ type Stats struct {
 	ArtistCount int32
 	AlbumCount  int32
 	TrackCount  int32
+
+	UserCount int32
 }
 
 func (t Track) ID() graphql.ID {
@@ -182,8 +184,10 @@ func (r *Resolver) Stats(c context.Context) (Stats, error) {
 	r.c.DB.Model(&Album{}).Count(&AlbumCount)
 	var TrackCount int32
 	r.c.DB.Model(&Track{}).Count(&TrackCount)
+	var UserCount int32
+	r.c.DB.Model(&User{}).Count(&UserCount)
 
-	return Stats{ArtistCount, AlbumCount, TrackCount}, nil
+	return Stats{ArtistCount, AlbumCount, TrackCount, UserCount}, nil
 }
 
 func (r *Resolver) NewPlaylist(c context.Context, args struct{ Name string }) (Playlist, error) {

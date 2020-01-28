@@ -55,4 +55,5 @@ type Stats {
   artistCount: Int!
   albumCount: Int!
   trackCount: Int!
+  userCount: Int!
 }

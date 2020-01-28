@@ -23,7 +23,7 @@ const PlaylistPage = ({ playlist }: Props) => {
       <div onClick={() => playPlaylist(playlist, 0)}>Play</div>
       <div>
         {playlist.tracks.map(track => (
-          <Track key={track.id} track={track} />
+          <Track key={track.id} showArtist track={track} />
         ))}
       </div>
     </div>
