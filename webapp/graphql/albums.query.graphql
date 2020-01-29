@@ -1,0 +1,7 @@
+query Albums {
+  albums {
+    id
+    title
+    url
+  }
+}

@@ -1,5 +1,6 @@
 import { createContext } from "react";
 import { Playback, Track, Album, Playlist } from "utils/gqlTypes";
+import { getGraphqlClient } from "utils/req";
 
 export type PlayerState = {
   playing: boolean;
@@ -24,6 +25,7 @@ export type State = {
   playerState: PlayerState | null;
   queue: Array<Track>;
   currentList: ListType | null;
+  graphqlClient: ReturnType<typeof getGraphqlClient>;
 };
 
 export type Dispatchers = {
@@ -44,7 +46,8 @@ type Context = {
 export const initialState: State = {
   playerState: null,
   queue: [],
-  currentList: null
+  currentList: null,
+  graphqlClient: getGraphqlClient()
 };
 
 export const initialContextValue: Context = {

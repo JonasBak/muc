@@ -1,0 +1,20 @@
+query Playback($trackId: ID!) {
+  playback(trackId: $trackId) {
+    track {
+      id
+      title
+      album {
+        id
+        title
+        url
+        artist {
+          id
+          name
+        }
+      }
+    }
+    url
+    coverUrl
+    filetype
+  }
+}

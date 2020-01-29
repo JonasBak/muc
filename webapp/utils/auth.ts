@@ -5,7 +5,7 @@ export const getAuthCookie = (ctx?: NextPageContext): string => {
   let cookie = "";
   if (ctx && ctx!.req) {
     cookie = ctx!.req!.headers.cookie || "";
-  } else {
+  } else if (process.browser) {
     cookie = document.cookie;
   }
   const match = (cookie + ";").match(/muc-auth=(.|-)+?;/g);

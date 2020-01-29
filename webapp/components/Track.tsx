@@ -3,7 +3,7 @@ import { StoreContext } from "utils/context";
 import { getAuthCookie } from "utils/auth";
 import { useContext, useState, useEffect } from "react";
 import Modal from "components/Modal";
-import { getPlaylists, addToPlaylist } from "utils/req";
+import { errorWrapper } from "utils/req";
 
 const TrackMenu = ({
   track,
@@ -13,13 +13,17 @@ const TrackMenu = ({
   closeModal: () => void;
 }) => {
   const {
-    dispatchers: { enqueue }
+    dispatchers: { enqueue },
+    state: { graphqlClient }
   } = useContext(StoreContext);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   useEffect(() => {
     const fetchPlaylists = async () => {
-      const playlistsResult = await getPlaylists(getAuthCookie());
+      const playlistsResult = await errorWrapper(async () => {
+        const { playlists } = await graphqlClient.Playlists();
+        return playlists as Playlist[];
+      });
       if (playlistsResult.type === "SUCCESS")
         setPlaylists(playlistsResult.data);
     };
@@ -37,7 +41,12 @@ const TrackMenu = ({
           <div
             key={playlist.id}
             onClick={() =>
-              addToPlaylist(getAuthCookie(), playlist.id, track.id)
+              errorWrapper(async () =>
+                graphqlClient.AddToPlaylist({
+                  playlistId: playlist.id,
+                  trackId: track.id
+                })
+              )
             }
           >
             {playlist.name}

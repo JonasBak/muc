@@ -1,7 +1,7 @@
 import { Album } from "utils/gqlTypes";
 import { NextPageContext } from "next";
 import LoginForm from "components/LoginForm";
-import { getAlbums, Result } from "utils/req";
+import { getGraphqlClient, Result, errorWrapper } from "utils/req";
 import { getAuthCookie } from "utils/auth";
 import AlbumCover from "components/AlbumCover";
 import ErrorHandlerWrapper from "components/ErrorHandlerWrapper";
@@ -75,9 +75,10 @@ const AlbumHomeWrapper = (wrappedProps: Result<Album[]>) => (
 AlbumHomeWrapper.getInitialProps = async (
   context: NextPageContext
 ): Promise<Result<Album[]>> => {
-  const albumsResult = await getAlbums(getAuthCookie(context));
-
-  return albumsResult;
+  return errorWrapper(async () => {
+    const { albums } = await getGraphqlClient(context).Albums();
+    return albums as Album[];
+  });
 };
 
 export default AlbumHomeWrapper;

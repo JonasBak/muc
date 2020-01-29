@@ -3,7 +3,7 @@ import { getAuthCookie } from "utils/auth";
 import { NextPageContext } from "next";
 import ErrorHandlerWrapper from "components/ErrorHandlerWrapper";
 import Track from "components/Track";
-import { getTracks, Result } from "utils/req";
+import { getGraphqlClient, Result, errorWrapper } from "utils/req";
 
 type Props = {
   tracks: Array<TrackType>;
@@ -36,9 +36,10 @@ const TrackHomeWrapper = (wrappedProps: Result<TrackType[]>) => (
 TrackHomeWrapper.getInitialProps = async (
   context: NextPageContext
 ): Promise<Result<TrackType[]>> => {
-  const tracksResult = await getTracks(getAuthCookie(context));
-
-  return tracksResult;
+  return errorWrapper(async () => {
+    const { tracks } = await getGraphqlClient(context).Tracks();
+    return tracks as TrackType[];
+  });
 };
 
 export default TrackHomeWrapper;

@@ -1,7 +1,7 @@
 import { Playlist } from "utils/gqlTypes";
 import { NextPageContext } from "next";
 import LoginForm from "components/LoginForm";
-import { getPlaylists, Result } from "utils/req";
+import { getGraphqlClient, Result, errorWrapper } from "utils/req";
 import { getAuthCookie } from "utils/auth";
 import AlbumCover from "components/AlbumCover";
 import ErrorHandlerWrapper from "components/ErrorHandlerWrapper";
@@ -67,9 +67,10 @@ const PlaylistHomeWrapper = (wrappedProps: Result<Playlist[]>) => (
 PlaylistHomeWrapper.getInitialProps = async (
   context: NextPageContext
 ): Promise<Result<Playlist[]>> => {
-  const playlistsResult = await getPlaylists(getAuthCookie(context));
-
-  return playlistsResult;
+  return errorWrapper(async () => {
+    const { playlists } = await getGraphqlClient(context).Playlists();
+    return playlists as Playlist[];
+  });
 };
 
 export default PlaylistHomeWrapper;

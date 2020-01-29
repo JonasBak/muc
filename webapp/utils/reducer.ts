@@ -1,7 +1,12 @@
 import { Playback, Track, Album, Playlist } from "utils/gqlTypes";
 import { State, PlayerState, initialState } from "utils/context";
+import { getGraphqlClient } from "utils/req";
 
 export type Action =
+  | {
+      type: "SET_GRAPHQL_CLIENT";
+      value: ReturnType<typeof getGraphqlClient>;
+    }
   | {
       type: "SET_PLAYER_STATE";
       value: PlayerState;
@@ -33,6 +38,12 @@ export type Action =
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case "SET_GRAPHQL_CLIENT": {
+      return {
+        ...state,
+        graphqlClient: action.value
+      };
+    }
     case "SET_PLAYER_STATE": {
       return {
         ...state,

@@ -1,0 +1,10 @@
+mutation AddToPlaylist($playlistId: ID!, $trackId: ID!) {
+  addToPlaylist(playlistId: $playlistId, trackId: $trackId) {
+    id
+    name
+    tracks {
+      id
+      title
+    }
+  }
+}

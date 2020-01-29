@@ -2,7 +2,7 @@ import { Album } from "utils/gqlTypes";
 import { getAuthCookie } from "utils/auth";
 import { NextPageContext } from "next";
 import AlbumCover from "components/AlbumCover";
-import { getAlbum, Result } from "utils/req";
+import { getGraphqlClient, Result, errorWrapper } from "utils/req";
 import Track from "components/Track";
 import LoginForm from "components/LoginForm";
 import { useContext } from "react";
@@ -59,12 +59,12 @@ AlbumPageWrapper.getInitialProps = async (
   context: NextPageContext
 ): Promise<Result<Album>> => {
   const id = context.query.id;
-  const albumResult = await getAlbum(
-    getAuthCookie(context),
-    typeof id === "string" ? id : id[0]
-  );
-
-  return albumResult;
+  return errorWrapper(async () => {
+    const { album } = await getGraphqlClient(context).Album({
+      albumId: typeof id === "string" ? id : id[0]
+    });
+    return album as Album;
+  });
 };
 
 export default AlbumPageWrapper;

@@ -1,0 +1,15 @@
+query Album($albumId: ID!) {
+  album(albumId: $albumId) {
+    id
+    title
+    url
+    artist {
+      id
+      name
+    }
+    tracks {
+      id
+      title
+    }
+  }
+}

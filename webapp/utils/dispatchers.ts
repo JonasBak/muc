@@ -5,18 +5,19 @@ import {
   State,
   Dispatchers
 } from "utils/context";
-import { getAuthCookie } from "utils/auth";
 import { Track, Playback, Album, Playlist } from "utils/gqlTypes";
 import { Action } from "utils/reducer";
-import { getPlayback } from "utils/req";
+import { errorWrapper } from "utils/req";
 
 export const playTrack = (
   state: State,
   dispatch: (action: Action) => void
 ): Dispatchers["playTrack"] => {
   return async (trackId: string) => {
-    const auth = getAuthCookie();
-    const playbackResult = await getPlayback(auth, trackId);
+    const playbackResult = await errorWrapper(async () => {
+      const { playback } = await state.graphqlClient.Playback({ trackId });
+      return playback as Playback;
+    });
     if (playbackResult.type == "SUCCESS") {
       dispatch({
         type: "SET_PLAYER_STATE",
@@ -79,9 +80,13 @@ export const nextTrack = (
   dispatch: (action: Action) => void
 ): Dispatchers["nextTrack"] => {
   return async () => {
-    const auth = getAuthCookie();
     if (state.queue.length > 0) {
-      const playbackResult = await getPlayback(auth, state.queue[0].id);
+      const playbackResult = await errorWrapper(async () => {
+        const { playback } = await state.graphqlClient.Playback({
+          trackId: state.queue[0].id
+        });
+        return playback as Playback;
+      });
       if (playbackResult.type == "SUCCESS") {
         dispatch({
           type: "DEQUEUE",
@@ -97,10 +102,14 @@ export const nextTrack = (
     }
     switch (state.currentList.type) {
       case "ALBUM": {
-        const playbackResult = await getPlayback(
-          auth,
-          state.currentList.album.tracks[state.currentList.nextIndex].id
-        );
+        const trackId =
+          state.currentList.album.tracks[state.currentList.nextIndex].id;
+        const playbackResult = await errorWrapper(async () => {
+          const { playback } = await state.graphqlClient.Playback({
+            trackId
+          });
+          return playback as Playback;
+        });
         if (playbackResult.type == "SUCCESS") {
           dispatch({
             type: "NEXT_TRACK",
@@ -112,10 +121,14 @@ export const nextTrack = (
         break;
       }
       case "PLAYLIST": {
-        const playbackResult = await getPlayback(
-          auth,
-          state.currentList.playlist.tracks[state.currentList.nextIndex].id
-        );
+        const trackId =
+          state.currentList.playlist.tracks[state.currentList.nextIndex].id;
+        const playbackResult = await errorWrapper(async () => {
+          const { playback } = await state.graphqlClient.Playback({
+            trackId
+          });
+          return playback as Playback;
+        });
         if (playbackResult.type == "SUCCESS") {
           dispatch({
             type: "NEXT_TRACK",
@@ -135,11 +148,13 @@ export const playAlbum = (
   dispatch: (action: Action) => void
 ): Dispatchers["playAlbum"] => {
   return async (album: Album, currentIndex: number) => {
-    const auth = getAuthCookie();
-    const playbackResult = await getPlayback(
-      auth,
-      album.tracks[currentIndex].id
-    );
+    const trackId = album.tracks[currentIndex].id;
+    const playbackResult = await errorWrapper(async () => {
+      const { playback } = await state.graphqlClient.Playback({
+        trackId
+      });
+      return playback as Playback;
+    });
     if (playbackResult.type == "SUCCESS") {
       dispatch({
         type: "PLAY_ALBUM",
@@ -158,11 +173,13 @@ export const playPlaylist = (
   dispatch: (action: Action) => void
 ): Dispatchers["playPlaylist"] => {
   return async (playlist: Playlist, currentIndex: number) => {
-    const auth = getAuthCookie();
-    const playbackResult = await getPlayback(
-      auth,
-      playlist.tracks[currentIndex].id
-    );
+    const trackId = playlist.tracks[currentIndex].id;
+    const playbackResult = await errorWrapper(async () => {
+      const { playback } = await state.graphqlClient.Playback({
+        trackId
+      });
+      return playback as Playback;
+    });
     if (playbackResult.type == "SUCCESS") {
       dispatch({
         type: "PLAY_PLAYLIST",

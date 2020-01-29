@@ -1,7 +1,6 @@
 import { Playlist } from "utils/gqlTypes";
-import { getAuthCookie } from "utils/auth";
 import { NextPageContext } from "next";
-import { getPlaylist, Result } from "utils/req";
+import { getGraphqlClient, Result, errorWrapper } from "utils/req";
 import Track from "components/Track";
 import LoginForm from "components/LoginForm";
 import { useContext } from "react";
@@ -49,12 +48,12 @@ PlaylistPageWrapper.getInitialProps = async (
   context: NextPageContext
 ): Promise<Result<Playlist>> => {
   const id = context.query.id;
-  const playlistResult = await getPlaylist(
-    getAuthCookie(context),
-    typeof id === "string" ? id : id[0]
-  );
-
-  return playlistResult;
+  return errorWrapper(async () => {
+    const { playlist } = await getGraphqlClient(context).Playlist({
+      playlistId: typeof id === "string" ? id : id[0]
+    });
+    return playlist as Playlist;
+  });
 };
 
 export default PlaylistPageWrapper;

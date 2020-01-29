@@ -8,13 +8,17 @@ import {
   playAlbum,
   playPlaylist
 } from "utils/dispatchers";
-import { getPlayback } from "utils/req";
-import { useReducer } from "react";
+import { useReducer, useEffect } from "react";
 import { StoreContext, initialState, PlayerState, State } from "utils/context";
 import { Track } from "utils/gqlTypes";
+import { getGraphqlClient } from "utils/req";
 
 const Container = ({ children }: { children: any }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    dispatch({ type: "SET_GRAPHQL_CLIENT", value: getGraphqlClient() });
+  }, []);
 
   return (
     <StoreContext.Provider

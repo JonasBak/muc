@@ -1,14 +1,19 @@
 import { Stats } from "utils/gqlTypes";
 import { getAuthCookie } from "utils/auth";
 import { NextPageContext } from "next";
+import { useContext } from "react";
 import ErrorHandlerWrapper from "components/ErrorHandlerWrapper";
-import { getStats, Result, rescan } from "utils/req";
+import { getGraphqlClient, Result, errorWrapper } from "utils/req";
+import { StoreContext } from "utils/context";
 
 type Props = {
   stats: Stats;
 };
 
 const AdminHome = ({ stats }: Props) => {
+  const {
+    state: { graphqlClient }
+  } = useContext(StoreContext);
   return (
     <div>
       <h1>Admin</h1>
@@ -17,7 +22,9 @@ const AdminHome = ({ stats }: Props) => {
       <div>{`Albums: ${stats.albumCount}`}</div>
       <div>{`Tracks: ${stats.trackCount}`}</div>
       <div>{`Users: ${stats.userCount}`}</div>
-      <button onClick={() => rescan(getAuthCookie())}>Rescan</button>
+      <button onClick={() => errorWrapper(() => graphqlClient.Rescan())}>
+        Rescan
+      </button>
     </div>
   );
 };
@@ -38,9 +45,10 @@ const AdminHomeWrapper = (wrappedProps: Result<Stats>) => (
 AdminHomeWrapper.getInitialProps = async (
   context: NextPageContext
 ): Promise<Result<Stats>> => {
-  const tracksResult = await getStats(getAuthCookie(context));
-
-  return tracksResult;
+  return errorWrapper(async () => {
+    const { stats } = await getGraphqlClient(context).Stats();
+    return stats as Stats;
+  });
 };
 
 export default AdminHomeWrapper;

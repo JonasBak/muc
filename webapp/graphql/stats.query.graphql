@@ -1,0 +1,8 @@
+query Stats {
+  stats {
+    artistCount
+    albumCount
+    trackCount
+    userCount
+  }
+}

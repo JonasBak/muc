@@ -15,7 +15,7 @@ import (
 
 func applyMiddleware(handler http.Handler) http.Handler {
 	// CORS
-	headersOk := handlers.AllowedHeaders([]string{"muc-auth"})
+	headersOk := handlers.AllowedHeaders([]string{"muc-auth", "content-type"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	handler = handlers.CORS(originsOk, headersOk, methodsOk)(handler)

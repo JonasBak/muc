@@ -1,3 +1,6 @@
+import { GraphQLClient } from 'graphql-request';
+import { print } from 'graphql';
+import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -111,3 +114,341 @@ export type Track = {
   title: Scalars['String'],
   trackIndex: Scalars['Int'],
 };
+
+export type AddToPlaylistMutationVariables = {
+  playlistId: Scalars['ID'],
+  trackId: Scalars['ID']
+};
+
+
+export type AddToPlaylistMutation = (
+  { __typename?: 'Mutation' }
+  & { addToPlaylist: (
+    { __typename?: 'Playlist' }
+    & Pick<Playlist, 'id' | 'name'>
+    & { tracks: Array<(
+      { __typename?: 'Track' }
+      & Pick<Track, 'id' | 'title'>
+    )> }
+  ) }
+);
+
+export type AlbumQueryVariables = {
+  albumId: Scalars['ID']
+};
+
+
+export type AlbumQuery = (
+  { __typename?: 'Query' }
+  & { album: (
+    { __typename?: 'Album' }
+    & Pick<Album, 'id' | 'title' | 'url'>
+    & { artist: (
+      { __typename?: 'Artist' }
+      & Pick<Artist, 'id' | 'name'>
+    ), tracks: Array<(
+      { __typename?: 'Track' }
+      & Pick<Track, 'id' | 'title'>
+    )> }
+  ) }
+);
+
+export type AlbumsQueryVariables = {};
+
+
+export type AlbumsQuery = (
+  { __typename?: 'Query' }
+  & { albums: Array<(
+    { __typename?: 'Album' }
+    & Pick<Album, 'id' | 'title' | 'url'>
+  )> }
+);
+
+export type ArtistsQueryVariables = {};
+
+
+export type ArtistsQuery = (
+  { __typename?: 'Query' }
+  & { artists: Array<(
+    { __typename?: 'Artist' }
+    & Pick<Artist, 'id' | 'name'>
+  )> }
+);
+
+export type PlaybackQueryVariables = {
+  trackId: Scalars['ID']
+};
+
+
+export type PlaybackQuery = (
+  { __typename?: 'Query' }
+  & { playback: (
+    { __typename?: 'Playback' }
+    & Pick<Playback, 'url' | 'coverUrl' | 'filetype'>
+    & { track: (
+      { __typename?: 'Track' }
+      & Pick<Track, 'id' | 'title'>
+      & { album: (
+        { __typename?: 'Album' }
+        & Pick<Album, 'id' | 'title' | 'url'>
+        & { artist: (
+          { __typename?: 'Artist' }
+          & Pick<Artist, 'id' | 'name'>
+        ) }
+      ) }
+    ) }
+  ) }
+);
+
+export type PlaylistQueryVariables = {
+  playlistId: Scalars['ID']
+};
+
+
+export type PlaylistQuery = (
+  { __typename?: 'Query' }
+  & { playlist: (
+    { __typename?: 'Playlist' }
+    & Pick<Playlist, 'id' | 'name'>
+    & { tracks: Array<(
+      { __typename?: 'Track' }
+      & Pick<Track, 'id' | 'title'>
+      & { album: (
+        { __typename?: 'Album' }
+        & Pick<Album, 'id' | 'title'>
+        & { artist: (
+          { __typename?: 'Artist' }
+          & Pick<Artist, 'id' | 'name'>
+        ) }
+      ) }
+    )> }
+  ) }
+);
+
+export type PlaylistsQueryVariables = {};
+
+
+export type PlaylistsQuery = (
+  { __typename?: 'Query' }
+  & { playlists: Array<(
+    { __typename?: 'Playlist' }
+    & Pick<Playlist, 'id' | 'name'>
+    & { tracks: Array<(
+      { __typename?: 'Track' }
+      & Pick<Track, 'id' | 'title'>
+    )> }
+  )> }
+);
+
+export type RescanMutationVariables = {};
+
+
+export type RescanMutation = (
+  { __typename?: 'Mutation' }
+  & { rescan: (
+    { __typename?: 'Stats' }
+    & Pick<Stats, 'artistCount' | 'albumCount' | 'trackCount'>
+  ) }
+);
+
+export type StatsQueryVariables = {};
+
+
+export type StatsQuery = (
+  { __typename?: 'Query' }
+  & { stats: (
+    { __typename?: 'Stats' }
+    & Pick<Stats, 'artistCount' | 'albumCount' | 'trackCount' | 'userCount'>
+  ) }
+);
+
+export type TracksQueryVariables = {};
+
+
+export type TracksQuery = (
+  { __typename?: 'Query' }
+  & { tracks: Array<(
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'title' | 'trackIndex'>
+    & { album: (
+      { __typename?: 'Album' }
+      & Pick<Album, 'id' | 'title'>
+      & { artist: (
+        { __typename?: 'Artist' }
+        & Pick<Artist, 'id' | 'name'>
+      ) }
+    ) }
+  )> }
+);
+
+
+export const AddToPlaylistDocument = gql`
+    mutation AddToPlaylist($playlistId: ID!, $trackId: ID!) {
+  addToPlaylist(playlistId: $playlistId, trackId: $trackId) {
+    id
+    name
+    tracks {
+      id
+      title
+    }
+  }
+}
+    `;
+export const AlbumDocument = gql`
+    query Album($albumId: ID!) {
+  album(albumId: $albumId) {
+    id
+    title
+    url
+    artist {
+      id
+      name
+    }
+    tracks {
+      id
+      title
+    }
+  }
+}
+    `;
+export const AlbumsDocument = gql`
+    query Albums {
+  albums {
+    id
+    title
+    url
+  }
+}
+    `;
+export const ArtistsDocument = gql`
+    query Artists {
+  artists {
+    id
+    name
+  }
+}
+    `;
+export const PlaybackDocument = gql`
+    query Playback($trackId: ID!) {
+  playback(trackId: $trackId) {
+    track {
+      id
+      title
+      album {
+        id
+        title
+        url
+        artist {
+          id
+          name
+        }
+      }
+    }
+    url
+    coverUrl
+    filetype
+  }
+}
+    `;
+export const PlaylistDocument = gql`
+    query Playlist($playlistId: ID!) {
+  playlist(playlistId: $playlistId) {
+    id
+    name
+    tracks {
+      id
+      title
+      album {
+        id
+        title
+        artist {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+export const PlaylistsDocument = gql`
+    query Playlists {
+  playlists {
+    id
+    name
+    tracks {
+      id
+      title
+    }
+  }
+}
+    `;
+export const RescanDocument = gql`
+    mutation Rescan {
+  rescan {
+    artistCount
+    albumCount
+    trackCount
+  }
+}
+    `;
+export const StatsDocument = gql`
+    query Stats {
+  stats {
+    artistCount
+    albumCount
+    trackCount
+    userCount
+  }
+}
+    `;
+export const TracksDocument = gql`
+    query Tracks {
+  tracks {
+    id
+    title
+    trackIndex
+    album {
+      id
+      title
+      artist {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+export function getSdk(client: GraphQLClient) {
+  return {
+    AddToPlaylist(variables: AddToPlaylistMutationVariables): Promise<AddToPlaylistMutation> {
+      return client.request<AddToPlaylistMutation>(print(AddToPlaylistDocument), variables);
+    },
+    Album(variables: AlbumQueryVariables): Promise<AlbumQuery> {
+      return client.request<AlbumQuery>(print(AlbumDocument), variables);
+    },
+    Albums(variables?: AlbumsQueryVariables): Promise<AlbumsQuery> {
+      return client.request<AlbumsQuery>(print(AlbumsDocument), variables);
+    },
+    Artists(variables?: ArtistsQueryVariables): Promise<ArtistsQuery> {
+      return client.request<ArtistsQuery>(print(ArtistsDocument), variables);
+    },
+    Playback(variables: PlaybackQueryVariables): Promise<PlaybackQuery> {
+      return client.request<PlaybackQuery>(print(PlaybackDocument), variables);
+    },
+    Playlist(variables: PlaylistQueryVariables): Promise<PlaylistQuery> {
+      return client.request<PlaylistQuery>(print(PlaylistDocument), variables);
+    },
+    Playlists(variables?: PlaylistsQueryVariables): Promise<PlaylistsQuery> {
+      return client.request<PlaylistsQuery>(print(PlaylistsDocument), variables);
+    },
+    Rescan(variables?: RescanMutationVariables): Promise<RescanMutation> {
+      return client.request<RescanMutation>(print(RescanDocument), variables);
+    },
+    Stats(variables?: StatsQueryVariables): Promise<StatsQuery> {
+      return client.request<StatsQuery>(print(StatsDocument), variables);
+    },
+    Tracks(variables?: TracksQueryVariables): Promise<TracksQuery> {
+      return client.request<TracksQuery>(print(TracksDocument), variables);
+    }
+  };
+}

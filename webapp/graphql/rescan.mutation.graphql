@@ -1,0 +1,7 @@
+mutation Rescan {
+  rescan {
+    artistCount
+    albumCount
+    trackCount
+  }
+}
