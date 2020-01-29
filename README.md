@@ -33,7 +33,7 @@ To install all frontend dependencies, run `yarn`.
 
 ## Running
 
-Run the backend with `go run .`. A graphiql page will be available at [localhost:3030](http://localhost:3030/) for debugging.
+Run the backend with `muc serve`. A graphiql page will be available at [localhost:3030](http://localhost:3030/) for debugging. See all available options with `muc help`
 
 Run the frontend with `yarn dev`. It will be available at [localhost:3000](http://localhost:3000/)
 
@@ -43,6 +43,10 @@ If you don't have a minio instance running, you can run `docker-compose -f ./tes
 
 If the graphql schema in `schema.graphiql` is changed, run `yarn gen:graphql` to regenerate the typescript types used in the frontend.
 
+If you want to add a new query from the frontend, add the query to a file in `webapp/graphql/`, and run `yarn gen:graphql`. After this the query will be available as a method on the `graphqlClient` object.
+
 ## Testing
 
 Run tests with `go test -v ./...`
+
+To run tests against minio, first run `docker-compose -f ./test/docker-compose.yml up -d` to start and initialize minio. Then run `TEST_AGAINST_MINIO=true go test ./...` to run all tests.
