@@ -8,6 +8,7 @@ import LoginForm from "components/LoginForm";
 import { useContext } from "react";
 import { StoreContext } from "utils/context";
 import ErrorHandlerWrapper from "components/ErrorHandlerWrapper";
+import theme from "utils/theme";
 
 type Props = {
   album: Album;
@@ -33,7 +34,7 @@ const AlbumPage = ({ album }: Props) => {
       </div>
       <style jsx>{`
         .artist {
-          color: #b0b0b0;
+          color: ${theme.colors.fontalt};
         }
       `}</style>
     </div>

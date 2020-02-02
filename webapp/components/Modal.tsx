@@ -1,4 +1,5 @@
 import { useState } from "react";
+import theme from "utils/theme";
 
 const Modal = ({
   Component,
@@ -37,10 +38,10 @@ const Modal = ({
           height: 100%;
           align-items: center;
           justify-content: center;
-          background-color: #0c0c0caa;
+          background-color: ${theme.colors.dark0}aa;
         }
         .modalBody {
-          background-color: #222222;
+          background-color: ${theme.colors.dark1};
           padding: 5px;
         }
       `}</style>

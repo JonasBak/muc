@@ -2,6 +2,7 @@ import { Track } from "utils/gqlTypes";
 import { useContext } from "react";
 import { StoreContext, PlayerState, Dispatchers } from "utils/context";
 import PlayPauseButton from "components/PlayPauseButton";
+import theme from "utils/theme";
 
 const formatTime = (time: number): string => {
   return `${Math.floor(time / 60)}:${((time % 60) + "").padStart(2, "0")}`;
@@ -48,7 +49,7 @@ const TrackText = ({
           font-weight: bold;
         }
         .artist {
-          color: #b0b0b0;
+          color: ${theme.colors.fontalt};
         }
       `}</style>
     </div>
@@ -71,14 +72,14 @@ const Player = () => {
       </div>
       <style jsx>{`
         .wrapper {
-          background-color: #0f0f0f;
+          background-color: ${theme.colors.header};
           height: 50px;
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
         .title {
-          color: #2d2e2e;
+          color: ${theme.colors.dark2};
           margin-left: 20px;
           font-size: 24px;
           font-weight: bold;

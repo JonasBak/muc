@@ -3,6 +3,7 @@ import { StoreContext, PlayerState, Dispatchers } from "utils/context";
 import Queue from "components/Queue";
 import PlayPauseButton from "components/PlayPauseButton";
 import AlbumCover from "components/AlbumCover";
+import theme from "utils/theme";
 
 const formatTime = (time: number): string => {
   return `${Math.floor(time / 60)}:${((time % 60) + "").padStart(2, "0")}`;
@@ -49,7 +50,7 @@ const TrackText = ({
           font-weight: bold;
         }
         .artist {
-          color: #b0b0b0;
+          color: ${theme.colors.fontalt};
         }
       `}</style>
     </div>

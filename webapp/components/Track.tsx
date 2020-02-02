@@ -4,6 +4,7 @@ import { getAuthCookie } from "utils/auth";
 import { useContext, useState, useEffect } from "react";
 import Modal from "components/Modal";
 import { errorWrapper } from "utils/req";
+import theme from "utils/theme";
 
 const TrackMenu = ({
   track,
@@ -85,7 +86,7 @@ const Track = ({ track, showArtist = false }: Props) => {
         .wrapper {
           display: flex;
           padding: 10px;
-          border-bottom: 2px solid #0f0f0f;
+          border-bottom: 2px solid ${theme.colors.dark0};
           border-radius: 5px;
         }
         .title {
@@ -93,7 +94,7 @@ const Track = ({ track, showArtist = false }: Props) => {
           flex: 1;
         }
         .album {
-          color: #b0b0b0;
+          color: ${theme.colors.fontalt};
         }
       `}</style>
     </div>

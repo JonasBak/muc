@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import theme from "utils/theme";
 
 const PanelLink = ({
   href,
@@ -12,7 +13,9 @@ const PanelLink = ({
 }) => {
   return (
     <Link href={href}>
-      <a style={{ color: selected ? "#fdfffc" : "#828a95" }}>{title}</a>
+      <a style={{ color: selected ? theme.colors.font : theme.colors.link }}>
+        {title}
+      </a>
     </Link>
   );
 };
@@ -56,9 +59,9 @@ const Sidepanel = () => {
         .wrapper {
           display: flex;
           flex-direction: column;
-          box-shadow: inset -2px 0px 2px #0f0f0f;
+          box-shadow: inset -2px 0px 2px ${theme.colors.dark0};
           padding: 20px;
-          background-color: #222222;
+          background-color: ${theme.colors.sidebar};
         }
       `}</style>
     </div>

@@ -3,6 +3,7 @@ import Container from "components/Container";
 import Player from "components/Player";
 import Sidepanel from "components/Sidepanel";
 import Audio from "components/Audio";
+import theme from "utils/theme";
 
 class CustomApp extends App {
   public render() {
@@ -19,8 +20,8 @@ class CustomApp extends App {
         </div>
         <style jsx global>{`
           html {
-            background-color: #2d2e2e;
-            color: #fdfffc;
+            background-color: ${theme.colors.background};
+            color: ${theme.colors.font};
             font-family: sans;
             height: 100%;
           }
@@ -34,7 +35,7 @@ class CustomApp extends App {
             flex-direction: column;
           }
           a {
-            color: #828a95;
+            color: ${theme.colors.link};
             font-weight: bold;
             text-decoration: none;
           }

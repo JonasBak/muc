@@ -1,3 +1,5 @@
+import theme from "utils/theme";
+
 const PlayPauseButton = ({
   playing,
   handleClick
@@ -17,8 +19,8 @@ const PlayPauseButton = ({
           height: 30px;
           width: 30px;
           font-size: 18px;
-          box-shadow: 0px 0px 3px 0px #b0b0b0;
-          background-color: #222222;
+          box-shadow: 0px 0px 3px 0px ${theme.colors.light1};
+          background-color: ${theme.colors.dark1};
         }
       `}</style>
     </div>
