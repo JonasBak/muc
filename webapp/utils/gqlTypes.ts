@@ -175,6 +175,19 @@ export type ArtistsQuery = (
   )> }
 );
 
+export type NewPlaylistMutationVariables = {
+  name: Scalars['String']
+};
+
+
+export type NewPlaylistMutation = (
+  { __typename?: 'Mutation' }
+  & { newPlaylist: (
+    { __typename?: 'Playlist' }
+    & Pick<Playlist, 'id' | 'name'>
+  ) }
+);
+
 export type PlaybackQueryVariables = {
   trackId: Scalars['ID']
 };
@@ -328,6 +341,14 @@ export const ArtistsDocument = gql`
   }
 }
     `;
+export const NewPlaylistDocument = gql`
+    mutation NewPlaylist($name: String!) {
+  newPlaylist(name: $name) {
+    id
+    name
+  }
+}
+    `;
 export const PlaybackDocument = gql`
     query Playback($trackId: ID!) {
   playback(trackId: $trackId) {
@@ -431,6 +452,9 @@ export function getSdk(client: GraphQLClient) {
     },
     Artists(variables?: ArtistsQueryVariables): Promise<ArtistsQuery> {
       return client.request<ArtistsQuery>(print(ArtistsDocument), variables);
+    },
+    NewPlaylist(variables: NewPlaylistMutationVariables): Promise<NewPlaylistMutation> {
+      return client.request<NewPlaylistMutation>(print(NewPlaylistDocument), variables);
     },
     Playback(variables: PlaybackQueryVariables): Promise<PlaybackQuery> {
       return client.request<PlaybackQuery>(print(PlaybackDocument), variables);

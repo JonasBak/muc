@@ -1,0 +1,6 @@
+mutation NewPlaylist($name: String!){
+  newPlaylist(name: $name) {
+    id
+    name
+  }
+}

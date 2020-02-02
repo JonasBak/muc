@@ -73,8 +73,7 @@ const Track = ({ track, showArtist = false }: Props) => {
     dispatchers: { playTrack }
   } = useContext(StoreContext);
   return (
-    <div className="wrapper">
-      <div onClick={() => playTrack(track.id)}>▶ </div>
+    <div onDoubleClick={e => playTrack(track.id)} className="wrapper">
       <div className="title">
         <span>{track.title}</span>
         {showArtist && (
@@ -88,6 +87,9 @@ const Track = ({ track, showArtist = false }: Props) => {
           padding: 10px;
           border-bottom: 2px solid ${theme.colors.dark0};
           border-radius: 5px;
+        }
+        .wrapper:hover {
+          background-color: ${theme.colors.dark1};
         }
         .title {
           padding: 0px 10px;

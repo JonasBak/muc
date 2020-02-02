@@ -14,14 +14,14 @@ const Modal = ({
 
   return (
     <div className="wrapper">
-      <div onClick={() => setVisible(true)}>{buttonText}</div>
+      <div onClick={e => setVisible(true)}>{buttonText}</div>
       {visible && (
         <div
           className="modal"
-          onClick={() => setVisible(false)}
+          onClick={e => e.defaultPrevented || setVisible(false)}
           style={{ display: "flex" }}
         >
-          <div className="modalBody">
+          <div className="modalBody" onClick={e => e.preventDefault()}>
             <Component {...props} closeModal={() => setVisible(false)} />
           </div>
         </div>
