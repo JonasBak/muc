@@ -18,6 +18,7 @@ export type Album = {
   url: Scalars['String'],
   artist: Artist,
   tracks: Array<Track>,
+  colors: Scalars['String'],
 };
 
 export type Artist = {
@@ -142,7 +143,7 @@ export type AlbumQuery = (
   { __typename?: 'Query' }
   & { album: (
     { __typename?: 'Album' }
-    & Pick<Album, 'id' | 'title' | 'url'>
+    & Pick<Album, 'id' | 'title' | 'url' | 'colors'>
     & { artist: (
       { __typename?: 'Artist' }
       & Pick<Artist, 'id' | 'name'>
@@ -160,7 +161,7 @@ export type AlbumsQuery = (
   { __typename?: 'Query' }
   & { albums: Array<(
     { __typename?: 'Album' }
-    & Pick<Album, 'id' | 'title' | 'url'>
+    & Pick<Album, 'id' | 'title' | 'url' | 'colors'>
   )> }
 );
 
@@ -203,7 +204,7 @@ export type PlaybackQuery = (
       & Pick<Track, 'id' | 'title'>
       & { album: (
         { __typename?: 'Album' }
-        & Pick<Album, 'id' | 'title' | 'url'>
+        & Pick<Album, 'id' | 'title' | 'url' | 'colors'>
         & { artist: (
           { __typename?: 'Artist' }
           & Pick<Artist, 'id' | 'name'>
@@ -228,7 +229,7 @@ export type PlaylistQuery = (
       & Pick<Track, 'id' | 'title'>
       & { album: (
         { __typename?: 'Album' }
-        & Pick<Album, 'id' | 'title'>
+        & Pick<Album, 'id' | 'title' | 'colors'>
         & { artist: (
           { __typename?: 'Artist' }
           & Pick<Artist, 'id' | 'name'>
@@ -285,7 +286,7 @@ export type TracksQuery = (
     & Pick<Track, 'id' | 'title' | 'trackIndex'>
     & { album: (
       { __typename?: 'Album' }
-      & Pick<Album, 'id' | 'title'>
+      & Pick<Album, 'id' | 'title' | 'colors'>
       & { artist: (
         { __typename?: 'Artist' }
         & Pick<Artist, 'id' | 'name'>
@@ -313,6 +314,7 @@ export const AlbumDocument = gql`
     id
     title
     url
+    colors
     artist {
       id
       name
@@ -330,6 +332,7 @@ export const AlbumsDocument = gql`
     id
     title
     url
+    colors
   }
 }
     `;
@@ -359,6 +362,7 @@ export const PlaybackDocument = gql`
         id
         title
         url
+        colors
         artist {
           id
           name
@@ -382,6 +386,7 @@ export const PlaylistDocument = gql`
       album {
         id
         title
+        colors
         artist {
           id
           name
@@ -431,6 +436,7 @@ export const TracksDocument = gql`
     album {
       id
       title
+      colors
       artist {
         id
         name

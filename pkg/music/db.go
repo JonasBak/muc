@@ -3,6 +3,7 @@ package music
 import (
 	"fmt"
 	"github.com/JonasBak/infrastucture/containers/muc/pkg/config"
+	"github.com/JonasBak/infrastucture/containers/muc/pkg/utils"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -54,6 +55,8 @@ type Album struct {
 	ArtistID uint   `gorm:"not null"`
 	Artist   Artist `gorm:"not null"`
 	Tracks   []Track
+
+	Colors string `gorm:"not null"`
 
 	UrlCache        *string
 	UrlCacheExpires *time.Time
@@ -111,6 +114,18 @@ func (c Client) IndexAlbum(subs []string) (*Album, error) {
 	album.Title = subs[2]
 	album.Artist = *artist
 	album.ObjectPrefix = object_prefix
+	coverKey := fmt.Sprintf("%scover.jpg", object_prefix)
+	_, coverUrl, expiry, err := c.getSafeFileUrl(coverKey, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	colors, err := utils.GetAlbumColors(*coverUrl)
+	if err != nil {
+		return nil, err
+	}
+	album.UrlCache = coverUrl
+	album.UrlCacheExpires = expiry
+	album.Colors = colors
 	c.DB.Create(&album)
 
 	return &album, nil

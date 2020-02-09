@@ -3,5 +3,6 @@ query Albums {
     id
     title
     url
+    colors
   }
 }

@@ -7,6 +7,7 @@ query Playback($trackId: ID!) {
         id
         title
         url
+        colors
         artist {
           id
           name

@@ -66,9 +66,10 @@ const TrackMenu = ({
 type Props = {
   track: TrackType;
   showArtist?: boolean;
+  colors?: boolean;
 };
 
-const Track = ({ track, showArtist = false }: Props) => {
+const Track = ({ track, showArtist = false, colors = false }: Props) => {
   const {
     dispatchers: { playTrack }
   } = useContext(StoreContext);
@@ -87,9 +88,13 @@ const Track = ({ track, showArtist = false }: Props) => {
           padding: 10px;
           border-bottom: 2px solid ${theme.colors.dark0};
           border-radius: 5px;
+          background: ${colors &&
+            `linear-gradient(45deg,${track.album.colors
+              .replace(/;/g, "88,")
+              .slice(0, -1)})`};
         }
         .wrapper:hover {
-          background-color: ${theme.colors.dark1};
+          background: ${theme.colors.dark1};
         }
         .title {
           padding: 0px 10px;

@@ -8,6 +8,7 @@ query Playlist($playlistId: ID!) {
       album {
         id
         title
+        colors
         artist {
           id
           name

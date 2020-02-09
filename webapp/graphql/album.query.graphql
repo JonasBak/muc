@@ -3,6 +3,7 @@ query Album($albumId: ID!) {
     id
     title
     url
+    colors
     artist {
       id
       name

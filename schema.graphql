@@ -34,6 +34,7 @@ type Album {
   url: String!
   artist: Artist!
   tracks: [Track!]!
+  colors: String!
 }
 type Artist {
   id: ID!
