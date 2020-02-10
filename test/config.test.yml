@@ -2,6 +2,7 @@ log-level: debug
 muc-port: 3031
 muc-link-ttl: 1440
 muc-link-margin: 10
+muc-find-colors: false
 allow-unauthenticated: false
 minio-host: 127.0.0.1:9000
 minio-access: muc-user

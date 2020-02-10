@@ -15,6 +15,7 @@ type ConfigStruct struct {
 	MucPort       uint `yaml:"muc-port" envconfig:"MUC_PORT"`
 	MucLinkTtl    uint `yaml:"muc-link-ttl" envconfig:"MUC_LINK_TTL"`
 	MucLinkMargin uint `yaml:"muc-link-margin" envconfig:"MUC_LINK_MARGIN"`
+	MucFindColors bool `yaml:"muc-find-colors" envconfig:"MUC_FIND_COLORS"`
 
 	AllowUnauthenticated bool `yaml:"allow-unauthenticated" envconfig:"ALLOW_UNAUTHENTICATED"`
 
