@@ -19,4 +19,4 @@ COPY --from=build /build/main .
 
 EXPOSE 3000
 
-CMD ["./main"]
+CMD ["./main", "serve"]
